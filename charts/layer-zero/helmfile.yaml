@@ -1,0 +1,10 @@
+---
+releases:
+  - name: "layer-zero"
+    namespace: "layer-zero"
+    chart: "./"
+    values:
+      - "./values.yaml"
+      - wallets: {{ requiredEnv "WALLETS" | b64dec | quote }}
+      - walletMnemonicMapping: {{ requiredEnv "WALLET_MNEMONIC_MAPPING" | b64dec | quote }}
+...
