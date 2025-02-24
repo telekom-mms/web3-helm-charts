@@ -1,0 +1,36 @@
+---
+# Source: https://github.com/apps/settings
+branches:
+  - name: main
+    protection:
+      required_pull_request_reviews:
+        required_approving_review_count: 1
+        dismiss_stale_reviews: true
+        require_code_owner_reviews: true
+        required_reviewers: 1
+      enforce_admins: true
+      required_status_checks:
+        strict: true
+        contexts: []
+      restrictions: null
+repository:
+  # The description of the repository
+  description: "A list of Helm Charts provided by the Deutsche Telekom MMS GmbH Web3 Infrastructure Team"
+  # A URL with more information about the repository
+  homepage: "https://geschaeftskunden.telekom.de/digitale-loesungen/infrastructure-as-a-service/staking-en"
+  # Either `true` to make the repository private, or `false` to make it public.
+  # TODO: Change me later back to "false"
+  private: true
+  # Either `true` to allow squash-merging pull requests, or `false` to prevent
+  # squash-merging.
+  allow_squash_merge: true
+  # Either `true` to allow merging pull requests with a merge commit, or `false`
+  # to prevent merging pull requests with merge commits.
+  allow_merge_commit: false
+  # Either `true` to allow rebase-merging pull requests, or `false` to prevent
+  # rebase-merging.
+  allow_rebase_merge: true
+  # Either `true` to enable automatic deletion of branches on merge, or `false` to disable
+  delete_branch_on_merge: true
+
+...
