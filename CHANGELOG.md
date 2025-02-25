@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/telekom-mms/web3-helm-charts/compare/v1.0.0...v1.0.1) (2025-02-25)
+
+
+### Bug Fixes
+
+* add permissions for semantic-release ([434f648](https://github.com/telekom-mms/web3-helm-charts/commit/434f6480269c9599c9b3b9ebfae8f44591cdc205))
+
 # 1.0.0 (2025-02-25)
 
 
