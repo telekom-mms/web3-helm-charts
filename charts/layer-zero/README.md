@@ -2,6 +2,12 @@
 
 Helm Chart for LayerZero
 
+layer-zero-chart is the Helm Chart used for deploying the Layer Zero API. It contains a values.yaml which describes the basic configuration of a MultiversX client, independent of any deployment environment.
+
+## Architecture
+
+![architecture plan](./img/layer-zero-architecture-plan.png)
+
 ## Usage
 
 This chart is not supposed to be deployed with the default values contained in the `values.yaml`.
