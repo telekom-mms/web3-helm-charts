@@ -86,15 +86,6 @@ topologySpreadConstraints: []
 ## @param startupProbe.successThreshold Success threshold for startup probe
 ## @param startupProbe.failureThreshold Failure threshold for startup probe
 ## @param customStartupProbe Custom startup probe overwriting the default startup probe
-## @param livenessProbe.enabled Enable liveness probe
-## @param livenessProbe.threshold Threshold for liveness probe
-## @param livenessProbe.httpGet.path HTTP GET path for liveness probe
-## @param livenessProbe.httpGet.port HTTP GET port for liveness probe
-## @param livenessProbe.initialDelaySeconds Initial delay for liveness probe
-## @param livenessProbe.timeoutSeconds Timeout for liveness probe
-## @param livenessProbe.periodSeconds Period for liveness probe
-## @param livenessProbe.successThreshold Success threshold for liveness probe
-## @param livenessProbe.failureThreshold Failure threshold for liveness probe
 ## @param customLivenessProbe Custom liveness probe overwriting the default liveness probe
 ## @param readinessProbe.enabled Enable readiness probe
 ## @param readinessProbe.initialDelaySeconds Initial delay for readiness probe
@@ -102,6 +93,9 @@ topologySpreadConstraints: []
 ## @param readinessProbe.periodSeconds Period for readiness probe
 ## @param readinessProbe.successThreshold Success threshold for readiness probe
 ## @param readinessProbe.failureThreshold Failure threshold for readiness probe
+## @param readinessProbe.httpGet.path HTTP path for readiness probe
+## @param readinessProbe.httpGet.httpHeaders[0].name HTTP header name
+## @param readinessProbe.httpGet.httpHeaders[0].value HTTP header value
 ## @param customReadinessProbe Custom readiness probe overwriting the default readiness probe
 startupProbe:
   enabled: false

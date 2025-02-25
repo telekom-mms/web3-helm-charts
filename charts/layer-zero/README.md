@@ -233,32 +233,26 @@ The following table lists the configurable parameters of the `layer-zero-chart` 
 
 ### Probe parameters
 
-| Name                                 | Description                                                    | Value            |
-| ------------------------------------ | -------------------------------------------------------------- | ---------------- |
-| `startupProbe.enabled`               | Enable startup probe                                           | `false`          |
-| `startupProbe.initialDelaySeconds`   | Initial delay for startup probe                                | `5`              |
-| `startupProbe.timeoutSeconds`        | Timeout for startup probe                                      | `1`              |
-| `startupProbe.periodSeconds`         | Period for startup probe                                       | `10`             |
-| `startupProbe.successThreshold`      | Success threshold for startup probe                            | `1`              |
-| `startupProbe.failureThreshold`      | Failure threshold for startup probe                            | `10`             |
-| `customStartupProbe`                 | Custom startup probe overwriting the default startup probe     | `{}`             |
-| `livenessProbe.enabled`              | Enable liveness probe                                          | `false`          |
-| `livenessProbe.threshold`            | Threshold for liveness probe                                   | `90`             |
-| `livenessProbe.httpGet.path`         | HTTP GET path for liveness probe                               | `/health/memory` |
-| `livenessProbe.httpGet.port`         | HTTP GET port for liveness probe                               | `8080`           |
-| `livenessProbe.initialDelaySeconds`  | Initial delay for liveness probe                               | `30`             |
-| `livenessProbe.timeoutSeconds`       | Timeout for liveness probe                                     | `1`              |
-| `livenessProbe.periodSeconds`        | Period for liveness probe                                      | `10`             |
-| `livenessProbe.successThreshold`     | Success threshold for liveness probe                           | `1`              |
-| `livenessProbe.failureThreshold`     | Failure threshold for liveness probe                           | `10`             |
-| `customLivenessProbe`                | Custom liveness probe overwriting the default liveness probe   | `{}`             |
-| `readinessProbe.enabled`             | Enable readiness probe                                         | `false`          |
-| `readinessProbe.initialDelaySeconds` | Initial delay for readiness probe                              | `5`              |
-| `readinessProbe.timeoutSeconds`      | Timeout for readiness probe                                    | `1`              |
-| `readinessProbe.periodSeconds`       | Period for readiness probe                                     | `10`             |
-| `readinessProbe.successThreshold`    | Success threshold for readiness probe                          | `1`              |
-| `readinessProbe.failureThreshold`    | Failure threshold for readiness probe                          | `10`             |
-| `customReadinessProbe`               | Custom readiness probe overwriting the default readiness probe | `{}`             |
+| Name                                          | Description                                                    | Value              |
+| --------------------------------------------- | -------------------------------------------------------------- | ------------------ |
+| `startupProbe.enabled`                        | Enable startup probe                                           | `false`            |
+| `startupProbe.initialDelaySeconds`            | Initial delay for startup probe                                | `5`                |
+| `startupProbe.timeoutSeconds`                 | Timeout for startup probe                                      | `1`                |
+| `startupProbe.periodSeconds`                  | Period for startup probe                                       | `10`               |
+| `startupProbe.successThreshold`               | Success threshold for startup probe                            | `1`                |
+| `startupProbe.failureThreshold`               | Failure threshold for startup probe                            | `10`               |
+| `customStartupProbe`                          | Custom startup probe overwriting the default startup probe     | `{}`               |
+| `customLivenessProbe`                         | Custom liveness probe overwriting the default liveness probe   | `{}`               |
+| `readinessProbe.enabled`                      | Enable readiness probe                                         | `true`             |
+| `readinessProbe.initialDelaySeconds`          | Initial delay for readiness probe                              | `5`                |
+| `readinessProbe.timeoutSeconds`               | Timeout for readiness probe                                    | `1`                |
+| `readinessProbe.periodSeconds`                | Period for readiness probe                                     | `10`               |
+| `readinessProbe.successThreshold`             | Success threshold for readiness probe                          | `1`                |
+| `readinessProbe.failureThreshold`             | Failure threshold for readiness probe                          | `10`               |
+| `readinessProbe.httpGet.path`                 | HTTP path for readiness probe                                  | `/`                |
+| `readinessProbe.httpGet.httpHeaders[0].name`  | HTTP header name                                               | `Accept`           |
+| `readinessProbe.httpGet.httpHeaders[0].value` | HTTP header value                                              | `application/json` |
+| `customReadinessProbe`                        | Custom readiness probe overwriting the default readiness probe | `{}`               |
 
 ### Termination parameters
 
