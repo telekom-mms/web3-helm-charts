@@ -1,6 +1,7 @@
 ---
 name: Semantic Release
 
+# yamllint disable-line rule:truthy
 on:
   push:
     branches:
@@ -12,9 +13,12 @@ on:
 jobs:
   semantic-release:
     permissions:
-      contents: write # to be able to publish a GitHub release
-      issues: write # to be able to comment on released issues
-      pull-requests: write # to be able to comment on released pull requests
+      # to be able to publish a GitHub release
+      contents: write
+      # to be able to comment on released issues
+      issues: write
+      # to be able to comment on released pull requests
+      pull-requests: write
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -28,7 +32,7 @@ jobs:
           git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: '23'
 

@@ -5,6 +5,9 @@ releases:
     chart: "./"
     values:
       - "./values.yaml"
+      # yamllint disable rule:braces
       - wallets: {{ requiredEnv "WALLETS" | b64dec | quote }}
+      # yamllint disable-line rule:line-length
       - walletMnemonicMapping: {{ requiredEnv "WALLET_MNEMONIC_MAPPING" | b64dec | quote }}
+      # yamllint enable rule:braces
 ...

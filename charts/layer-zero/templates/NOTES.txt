@@ -16,4 +16,3 @@ CHART DESCRIPTION: {{ .Chart.Description }}
   kubectl port-forward --namespace {{ .Release.Namespace }} svc/{{ template "common.names.fullname" . }} 8080:{{ coalesce .Values.service.port .Values.service.port }}
   echo URL            : http://127.0.0.1:{{ .Values.service.port }}/
 {{- end }}
-

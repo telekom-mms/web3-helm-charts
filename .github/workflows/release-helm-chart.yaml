@@ -1,6 +1,7 @@
 ---
 name: Release Helm Chart
 
+# yamllint disable-line rule:truthy
 on:
   push:
     branches:

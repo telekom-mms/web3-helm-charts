@@ -1,8 +1,7 @@
 # layer-zero-chart
 
-Helm Chart for LayerZero
-
-layer-zero-chart is the Helm Chart used for deploying the Layer Zero API. It contains a values.yaml which describes the basic configuration of a MultiversX client, independent of any deployment environment.
+layer-zero-chart is the Helm Chart used for deploying the [gasolina](https://github.com/LayerZero-Labs/gasolina).
+It contains a values.yaml which describes the basic configuration of a gasolina client.
 
 ## Architecture
 
@@ -10,18 +9,20 @@ layer-zero-chart is the Helm Chart used for deploying the Layer Zero API. It con
 
 ## Usage
 
-This chart is not supposed to be deployed with the default values contained in the `values.yaml`.
+This chart is not supposed to be deployed
+with the default values contained in the `values.yaml`.
 
 ### Using Helmfile
 
-[Helmfile](https://github.com/helmfile/helmfile) is a declarative spec for deploying Helm Charts.
+[Helmfile](https://github.com/helmfile/helmfile)
+is a declarative spec for deploying Helm Charts.
 It can be used to simplify the commands for rendering and deploying the Helm Chart.
 
 ```yaml
 ---
 repositories:
   - name: "layer-zero-chart"
-    url: "" # TODO: Fill me
+    url: "" TODO: Fill me
 
 releases:
   - name: "layer-zero"
@@ -31,7 +32,9 @@ releases:
     values:
       - "./values.yaml"
       - wallets: {{ requiredEnv "WALLETS" | b64dec | quote }}
+      <!-- markdownlint-disable MD013 -->
       - walletMnemonicMapping: {{ requiredEnv "WALLET_MNEMONIC_MAPPING" | b64dec | quote }}
+      <!-- markdownlint-enable MD013 -->
 ...
 ```
 
@@ -73,7 +76,9 @@ readme-generator --readme README.md --values values.yaml
 
 ### Wallets and Wallet Mnemonics
 
-The deployment of Gasolina requires the configuration of two essential values, `.Values.wallets (LAYERZERO_WALLETS_FILE_PATH)` and `.Values.walletMnemonicMapping (LAYERZERO_WALLET_MNEMONIC_MAPPING_FILE_PATH)`.
+The deployment of Gasolina requires the configuration of two essential values,
+`.Values.wallets (LAYERZERO_WALLETS_FILE_PATH)` and
+`.Values.walletMnemonicMapping (LAYERZERO_WALLET_MNEMONIC_MAPPING_FILE_PATH)`.
 
 #### Wallets
 
@@ -108,16 +113,17 @@ The deployment of Gasolina requires the configuration of two essential values, `
 
 ## Testing the node
 
-This example applies specifically to Arbitrum and Solana. If multiple chains are enabled, please ensure they are tested as well.
+This example applies specifically to Arbitrum and Solana.
+If multiple chains are enabled, please ensure they are tested as well.
 
 > If you change `.Values.service.port`, you need to adapt the port as well.
 
 If you have deployed with `service.type="LoadBalancer"`, fetch the external IP Address.
-
+<!-- markdownlint-disable MD013 -->
 ```shell
 export SERVICE_IP=$(kubectl get svc --namespace layer-zero layer-zero --template "{{ range (index .status.loadBalancer.ingress 0) }}{{ . }}{{ end }}")
 ```
-
+<!-- markdownlint-enable MD013 -->
 ```shell
 # If everything works, you should see StatusCode `200`
 curl $SERVICE_IP:8081/signer-info?chainName=solana
@@ -128,11 +134,13 @@ curl $SERVICE_IP:8081/signer-info?chainName=arbsep
 
 ### Testing Decentralized Verifier Networks (DVNs)
 
+<!-- markdownlint-disable MD013 -->
 ```shell
 git clone https://github.com/LayerZero-Labs/gasolina-aws.git
 npm i
 ./node_modules/.bin/ts-node scripts/testDeployment.ts -u http://$SERVICE_IP:8081 -e testnet
 ```
+<!-- markdownlint-enable MD013 -->
 
 A successful response will look like:
 
@@ -154,10 +162,12 @@ Response: {
 
 ## Configuration
 
-The following table lists the configurable parameters of the `layer-zero-chart` and their default values.
+The following table lists the configurable parameters of
+the `layer-zero-chart` and their default values.
 
 ## Parameters
 
+<!-- markdownlint-disable MD013 -->
 ### Image parameters
 
 | Name               | Description                         | Value                               |
@@ -303,6 +313,7 @@ The following table lists the configurable parameters of the `layer-zero-chart` 
 | `availableChainsAndRPCEndpoints` | `LAYERZERO_AVAILABLE_CHAIN_NAMES` List of available chains and their corresponding RPC endpoints | `{}`      |
 | `walletMnemonicMapping`          | `LAYERZERO_WALLET_MNEMONIC_MAPPING_FILE_PATH` JSON string for wallet mnemonic mapping            | `""`      |
 | `wallets`                        | `LAYERZERO_WALLETS_FILE_PATH` JSON string for wallets                                            | `""`      |
+<!-- markdownlint-enable MD013 -->
 
 ## Unit Tests
 
@@ -319,4 +330,5 @@ Contributions are welcome! Please open an issue or submit a pull request on GitH
 
 ## License
 
-This project is licensed under the Apache 2.0 License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the Apache 2.0 License -
+see the [LICENSE](LICENSE) file for details.

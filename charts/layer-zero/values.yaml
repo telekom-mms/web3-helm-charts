@@ -1,3 +1,4 @@
+# yamllint disable rule:line-length
 ---
 ## @section Image parameters
 ## @param image.registry The Docker registry for the image
@@ -108,11 +109,11 @@ customStartupProbe: {}
 customLivenessProbe: {}
 readinessProbe:
   enabled: true
-  initialDelaySeconds: 5
+  initialDelaySeconds: 20
   timeoutSeconds: 1
-  periodSeconds: 10
+  periodSeconds: 60
   successThreshold: 1
-  failureThreshold: 10
+  failureThreshold: 5
   httpGet:
     path: "/"
     httpHeaders:
@@ -149,11 +150,11 @@ metrics:
   serviceMonitor:
     enabled: false
 
-##################################
-##                              ##
+####################################
+##                                ##
 ## Custom layer-zero configuration ##
-##                              ##
-##################################
+##                                ##
+####################################
 
 ## @section Custom layer-zero configuration
 ## @param providerConfigType `PROVIDER_CONFIG_TYPE` LayerZero Provider Configuration Type
@@ -169,3 +170,5 @@ layerZeroSupportedULNVersions:
 availableChainsAndRPCEndpoints: {}
 walletMnemonicMapping: ""
 wallets: ""
+...
+# yamllint enable rule:line-length
