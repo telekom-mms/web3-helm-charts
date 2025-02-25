@@ -8,7 +8,7 @@ on:
       - "*"  # Runs on all push events to any branch
   pull_request:
     branches:
-      - "*"  # Runs on all pull request events targeting any branc
+      - "*"  # Runs on all pull request events targeting any branch
 
 jobs:
   pre-commit-job:

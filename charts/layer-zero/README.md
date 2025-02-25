@@ -1,7 +1,6 @@
 # layer-zero-chart
 
-layer-zero-chart is the Helm Chart used for deploying the [gasolina](https://github.com/LayerZero-Labs/gasolina).
-It contains a values.yaml which describes the basic configuration of a gasolina client.
+layer-zero-chart is the Helm Chart used for deploying [gasolina](https://github.com/LayerZero-Labs/gasolina).
 
 ## Architecture
 
@@ -72,20 +71,25 @@ npm install -g @bitnami/readme-generator-for-helm
 readme-generator --readme README.md --values values.yaml
 ```
 
-## Configuration and installation details
+## Helm Deployment with Encoded Wallet and Mnemonic Values
 
-### Wallets and Wallet Mnemonics
+To deploy Helm charts using Helmfile,
+you must pass the values for `WALLETS` and `WALLET_MNEMONIC_MAPPING`
+as Base64-encoded strings. The following steps outline the updated process:
 
-The deployment of Gasolina requires the configuration of two essential values,
-`.Values.wallets (LAYERZERO_WALLETS_FILE_PATH)` and
-`.Values.walletMnemonicMapping (LAYERZERO_WALLET_MNEMONIC_MAPPING_FILE_PATH)`.
+### Step 1: Create JSON Strings for Values
+
+Create JSON strings for the wallet values and
+mnemonic mappings in the following formats:
 
 #### Wallets
+
+> `"secretName": "dont care"` can't be changed, according to the Layer Zero Foundation.
 
 ```json
 [
     {
-        "name": "<WALLET_NAME>",
+        "name": "my-wallet",
         "byChainType": {
             "EVM": {
                 "address": "<WALLET_ADDRESS>",
@@ -98,18 +102,103 @@ The deployment of Gasolina requires the configuration of two essential values,
 
 #### Wallets Mnemonics
 
+> `"path": "m/44'/60'/0'/0/0"` is a derivation path.
+
 ```json
 {
-    "<WALLET_NAME>-EVM": {
-        "mnemonic": "<REDACTED>",
+    "my-wallet-EVM": {
+        "mnemonic": "<WALLET_MNEMONIC>",
         "path": "m/44'/60'/0'/0/0"
     },
-    "<WALLET_NAME>-SOLANA": {
-        "mnemonic": "<REDACTED>",
+    "my-wallet-SOLANA": {
+        "mnemonic": "<WALLET_MNEMONIC>",
         "path": "m/44'/501'/1'/0'"
     }
 }
 ```
+
+### Step 2: Convert JSON Strings to Base64
+
+Convert these JSON strings to Base64-encoded strings using the following commands:
+
+<!-- markdownlint-disable MD013 -->
+```bash
+echo -n '[{"name":"my-wallet","byChainType":{"EVM":{"address":"<WALLET_ADDRESS>","secretName":"dont care"}}}]' | base64
+```
+<!-- markdownlint-enable MD013 -->
+
+This command outputs the Base64-encoded string for the wallet values:
+
+```bash
+W3sibmFtZSI6Im15LXdhbGxldCIsImJ5Q2hhaW5UeXBlIjp7IkVWTSI6eyJhZGRyZXNzIjoiPFdBTExFVF9BRERSRVNTPiIsInNlY3JldE5hbWUiOiJkb250IGNhcmUifX19XQ==
+```
+
+And for the mnemonic mappings:
+
+<!-- markdownlint-disable MD013 -->
+```bash
+echo -n "{\"my-wallet-EVM\":{\"mnemonic\":\"<WALLET_MNEMONIC>\",\"path\":\"m/44'/60'/0'/0/0\"},\"my-wallet-SOLANA\":{\"mnemonic\":\"<WALLET_MNEMONIC>\",\"path\":\"m/44'/501'/1'/0'\"}}" | base64
+```
+<!-- markdownlint-enable MD013 -->
+
+This command outputs the Base64-encoded string for the mnemonic mappings:
+
+```bash
+eyJteS13YWxsZXQtRVZNIjp7Im1uZW1vbmljIjoiPFdBTExFVF9NTkVNT05JQz4iLCJwYXRoIjoibS80NCcvNjAnLzAnLzAvMCJ9LCJteS13YWxsZXQtU09MQU5BIjp7Im1uZW1vbmljIjoiPFdBTExFVF9NTkVNT05JQz4iLCJwYXRoIjoibS80NCcvNTAxJy8xJy8wJyJ9fQ==
+```
+
+### Step 3: Set Environment Variables
+
+Set these Base64-encoded strings as environment variables:
+
+```bash
+export W3sibmFtZSI6Im15LXdhbGxldCIsImJ5Q2hhaW5UeXBlIjp7IkVWTSI6eyJhZGRyZXNzIjoiPFdBTExFVF9BRERSRVNTPiIsInNlY3JldE5hbWUiOiJkb250IGNhcmUifX19XQ==
+export eyJteS13YWxsZXQtRVZNIjp7Im1uZW1vbmljIjoiPFdBTExFVF9NTkVNT05JQz4iLCJwYXRoIjoibS80NCcvNjAnLzAnLzAvMCJ9LCJteS13YWxsZXQtU09MQU5BIjp7Im1uZW1vbmljIjoiPFdBTExFVF9NTkVNT05JQz4iLCJwYXRoIjoibS80NCcvNTAxJy8xJy8wJyJ9fQ==
+```
+
+### Step 4: Run Helmfile Command
+
+Run the Helmfile command:
+
+```bash
+helmfile apply
+```
+
+This command deploys the Helm chart with the provided values for `WALLETS` and `WALLET_MNEMONIC_MAPPING`.
+
+Note that the `requiredEnv` function in Helmfile checks for the
+presence of these environment variables and only deploys if they are set.
+If you do not set the values for `WALLETS` and
+`WALLET_MNEMONIC_MAPPING` as environment variables, the deployment process
+will be aborted.
+
+### Alternative Deployment Method
+
+To deploy the Helm chart without using Helmfile, you can set the
+values for `WALLETS` and `WALLET_MNEMONIC_MAPPING` as environment
+variables and then run the Helm install command:
+
+```bash
+export WALLETS='W3sibmFtZSI6Im15LXdhbGxldCIsImJ5Q2hhaW5UeXBlIjp7IkVWTSI6eyJhZGRyZXNzIjoiPFdBTExFVF9BRERSRVNTPiIsInNlY3JldE5hbWUiOiJkb250IGNhcmUifX19XQ=='
+export WALLET_MNEMONIC_MAPPING='eyJteS13YWxsZXQtRVZNIjp7Im1uZW1vbmljIjoiPFdBTExFVF9NTkVNT05JQz4iLCJwYXRoIjoibS80NCcvNjAnLzAnLzAvMCJ9LCJteS13YWxsZXQtU09MQU5BIjp7Im1uZW1vbmljIjoiPFdBTExFVF9NTkVNT05JQz4iLCJwYXRoIjoibS80NCcvNTAxJy8xJy8wJyJ9fQ=='
+helm install layer-zero . --set wallets=$WALLETS --set walletMnemonicMapping=$WALLET_MNEMONIC_MAPPING
+```
+
+This command installs the Helm chart `layer-zero` and passes the
+values for `WALLETS` and `WALLET_MNEMONIC_MAPPING` directly
+as environment variables.
+
+Alternatively, you can also specify the values directly in the Helm install command:
+
+<!-- markdownlint-disable MD013 -->
+```bash
+helm install layer-zero . --set wallets=W3sibmFtZSI6Im15LXdhbGxldCIsImJ5Q2hhaW5UeXBlIjp7IkVWTSI6eyJhZGRyZXNzIjoiPFdBTExFVF9BRERSRVNTPiIsInNlY3JldE5hbWUiOiJkb250IGNhcmUifX19XQ== --set walletMnemonicMapping=eyJteS13YWxsZXQtRVZNIjp7Im1uZW1vbmljIjoiPFdBTExFVF9NTkVNT05JQz4iLCJwYXRoIjoibS80NCcvNjAnLzAnLzAvMCJ9LCJteS13YWxsZXQtU09MQU5BIjp7Im1uZW1vbmljIjoiPFdBTExFVF9NTkVNT05JQz4iLCJwYXRoIjoibS80NCcvNTAxJy8xJy8wJyJ9fQ==
+```
+<!-- markdownlint-enable MD013 -->
+
+This command is equivalent to the previous one, but the values are
+specified directly in the command without setting them
+as environment variables.
 
 ## Testing the node
 
@@ -144,7 +233,7 @@ npm i
 
 A successful response will look like:
 
-```json
+```shell
 --- [200] Successful request ---
 Response: {
   signatures: [
