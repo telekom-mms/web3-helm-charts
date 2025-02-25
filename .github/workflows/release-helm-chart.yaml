@@ -5,9 +5,6 @@ on:
   push:
     branches:
       - main
-  pull_request:
-    branches:
-      - main
 
 jobs:
   release:
@@ -29,12 +26,4 @@ jobs:
         uses: helm/chart-releaser-action@v1.7.0
         env:
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-
-      - name: Mark release as pre-release for PRs
-        if: github.event_name == 'pull_request'
-        run: |
-          TAG=$(gh release list --json tagName --jq '.[0].tagName')
-          gh release edit "$TAG" --prerelease
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ...
