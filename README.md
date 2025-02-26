@@ -2,7 +2,9 @@
 
 ## Description
 
-This repository contains Helm charts for deploying various Web3 applications and services which are provided by the Web3 Telekom MMS Team. The charts are designed to be easy to use and customizable for different environments.
+This repository contains Helm charts for deploying various Web3 applications
+and services which are provided by the Web3 Telekom MMS Team.
+The charts are designed to be easy to use and customizable for different environments.
 
 ## Installation
 
@@ -35,9 +37,10 @@ We welcome contributions! Please follow these steps to contribute:
 6. Create a new Pull Request.
 
 ### Guidelines
-
+<!-- markdownlint-disable MD013 -->
 - We use [semantic-release](https://semantic-release.gitbook.io/semantic-release/) to automate the versioning and release process. Please follow [Semantic Versioning](https://semver.org/) when making changes.
 - Use feature branches for all changes. Branch names should be descriptive of the work being done (e.g., `feature/add-new-chart`).
+<!-- markdownlint-enable MD013 -->
 
 ## License
 
