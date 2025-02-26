@@ -24,8 +24,7 @@ repository:
   # yamllint disable-line rule:line-length
   homepage: "https://geschaeftskunden.telekom.de/digitale-loesungen/infrastructure-as-a-service/staking-en"
   # Either `true` to make the repository private, or `false` to make it public.
-  # TODO: Change me later back to "false"
-  private: true
+  private: false
   # Either `true` to allow squash-merging pull requests, or `false` to prevent
   # squash-merging.
   allow_squash_merge: true
