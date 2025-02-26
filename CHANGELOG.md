@@ -4,6 +4,14 @@
 ### Features
 
 * enable merge commit ([15798cd](https://github.com/telekom-mms/web3-helm-charts/commit/15798cdde58447204a36ed1eec1dd6472ad70e21))
+* enable strict merge rules ([c80f899](https://github.com/telekom-mms/web3-helm-charts/commit/c80f899253171dc9bb8b8a4463b6368d697ab297))
+
+# [1.1.0](https://github.com/telekom-mms/web3-helm-charts/compare/v1.0.1...v1.1.0) (2025-02-26)
+
+
+### Features
+
+* enable merge commit ([15798cd](https://github.com/telekom-mms/web3-helm-charts/commit/15798cdde58447204a36ed1eec1dd6472ad70e21))
 
 ## [1.0.1](https://github.com/telekom-mms/web3-helm-charts/compare/v1.0.0...v1.0.1) (2025-02-25)
 
