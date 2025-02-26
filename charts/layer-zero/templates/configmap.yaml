@@ -10,5 +10,4 @@ data:
     {{ .Values.availableChainsAndRPCEndpoints | toPrettyJson | nindent 4 }}
   wallets.json: |
     {{ .Values.wallets | nindent 4 }}
-
 ...

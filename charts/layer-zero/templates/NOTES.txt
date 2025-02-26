@@ -2,8 +2,6 @@ CHART NAME: {{ .Chart.Name }}
 CHART VERSION: {{ .Chart.Version }}
 CHART DESCRIPTION: {{ .Chart.Description }}
 
-# TODO: Add kubectl port forward for http, then add clone of aws to get scripts and add the comman
-
 {{- if contains "LoadBalancer" .Values.service.type }}
 
 ** Please ensure an external IP is associated to the {{ template "common.names.fullname" . }} service before proceeding **
