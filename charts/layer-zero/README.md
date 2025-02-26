@@ -21,11 +21,11 @@ It can be used to simplify the commands for rendering and deploying the Helm Cha
 ---
 repositories:
   - name: "layer-zero-chart"
-    url: "" TODO: Fill me
+    url: "https://telekom-mms.githb.io/web3-helm-charts"
 
 releases:
   - name: "layer-zero"
-    chart: "layer-zero-chart/layer-zero"
+    chart: "web3-helm-charts/layer-zero"
     version: "1.0.0"
     namespace: "layer-zero"
     values:
