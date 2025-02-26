@@ -37,6 +37,7 @@ We welcome contributions! Please follow these steps to contribute:
 6. Create a new Pull Request.
 
 ### Guidelines
+
 <!-- markdownlint-disable MD013 -->
 - We use [semantic-release](https://semantic-release.gitbook.io/semantic-release/) to automate the versioning and release process. Please follow [Semantic Versioning](https://semver.org/) when making changes.
 - Use feature branches for all changes. Branch names should be descriptive of the work being done (e.g., `feature/add-new-chart`).
