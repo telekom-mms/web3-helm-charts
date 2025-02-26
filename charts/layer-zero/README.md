@@ -21,7 +21,7 @@ It can be used to simplify the commands for rendering and deploying the Helm Cha
 ---
 repositories:
   - name: "layer-zero-chart"
-    url: "https://telekom-mms.githb.io/web3-helm-charts"
+    url: "https://telekom-mms.github.io/web3-helm-charts"
 
 releases:
   - name: "layer-zero"

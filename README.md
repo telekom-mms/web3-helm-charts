@@ -11,7 +11,7 @@ The charts are designed to be easy to use and customizable for different environ
 To install the Helm charts, follow these steps:
 
 ```sh
-helm repo add web3-helm-charts https://telekom-mms.githb.io/web3-helm-charts
+helm repo add web3-helm-charts https://telekom-mms.github.io/web3-helm-charts
 helm repo update
 ```
 
