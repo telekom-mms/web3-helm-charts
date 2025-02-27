@@ -13,9 +13,12 @@ branches:
         strict: true
         contexts: []
       restrictions:
-        apps: []
-        users: []
+        apps:
+          - semantic-release
+        users:
+          - github-actions
         teams: []
+
 repository:
   # The description of the repository
   # yamllint disable-line rule:line-length
