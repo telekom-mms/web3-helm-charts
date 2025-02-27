@@ -1,0 +1,151 @@
+---
+apiVersion: "{{ include "common.capabilities.deployment.apiVersion" . }}"
+kind: "Deployment"
+metadata:
+  name: "{{ include "common.names.fullname" . }}"
+  labels:
+    {{- include "common.labels.standard" . | nindent 4 }}
+  {{- with .Values.extraLabels }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "common.labels.matchLabels" . | nindent 6 }}
+  replicas: {{ .Values.replicaCount }}
+  strategy: {{- toYaml .Values.updateStrategy | nindent 4 }}
+  template:
+    metadata:
+      labels:
+        {{- include "common.labels.matchLabels" . | nindent 8 }}
+      {{- with .Values.extraLabels }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    spec:
+    {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+        {{ toYaml . | nindent 8 | trim }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+        {{ toYaml . | nindent 8 | trim }}
+    {{- end }}
+    {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{ toYaml . | nindent 8 | trim }}
+    {{- end }}
+    {{- with .Values.securityContext }}
+      securityContext:
+        {{ toYaml . | nindent 8 | trim }}
+    {{- end }}
+    {{- with .Values.topologySpreadConstraints }}
+      topologySpreadConstraints:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.priorityClassName }}
+      priorityClassName: {{ . }}
+    {{- end }}
+      terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
+      containers:
+        - name: "gasolina"
+          image: "{{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: "{{ .Values.image.pullPolicy }}"
+        {{- with .Values.podSecurityContext }}
+          securityContext:
+            {{ toYaml . | nindent 12 | trim }}
+        {{- end }}
+          volumeMounts:
+            - name: {{ include "layer-zero.secretVolumeName" . }}
+              mountPath: "{{ include "layer-zero.secretVolumePath" . }}/"
+            - name: {{ include "layer-zero.configVolumeName" . }}
+              mountPath: "{{ include "layer-zero.configVolumePath" . }}/"
+        {{- if .Values.diagnosticMode.enabled }}
+          command: ["sleep"]
+          args: ["infinity"]
+        {{- else }}
+          args:
+            - "/bin/bash"
+            - "-c"
+            - "NODE_OPTIONS=--max-old-space-size=$MAX_OLD_SPACE_SIZE apps/gasolina/node_modules/.bin/ts-node-transpile-only apps/gasolina/src/index.ts"
+          {{- range .Values.extraArgs }}
+            {{ . }}
+          {{- end }}
+        {{- end }}
+          env:
+            - name: MAX_OLD_SPACE_SIZE
+              value: {{ include "layer-zero.convertMemoryToMB" .Values.resources.requests.memory | trim | quote }}
+            - name: SERVER_PORT
+              value: {{ .Values.service.port | quote }}
+            - name: PROVIDER_CONFIG_TYPE
+              value: {{ .Values.providerConfigType }}
+            - name: SIGNER_TYPE
+              value: "LOCAL_MNEMONIC"
+            - name: LAYERZERO_SUPPORTED_ULN_VERSIONS
+              value: {{ .Values.layerZeroSupportedULNVersions | toJson | quote }}
+            - name: LAYERZERO_AVAILABLE_CHAIN_NAMES
+              value: {{ .Values.availableChainsAndRPCEndpoints | keys | join "," | quote }}
+            - name: LAYERZERO_ENVIRONMENT
+              value: {{ .Values.layerZeroEnvironment | quote }}
+            - name: LAYERZERO_WALLETS_FILE_PATH
+              value: "{{ include "layer-zero.configVolumePath" . }}/wallets.json"
+            - name: LAYERZERO_WALLET_MNEMONIC_MAPPING_FILE_PATH
+              value: "{{ include "layer-zero.secretVolumePath" . }}/walletMnemonicMapping.json"
+            - name: LAYERZERO_PROVIDER_CONFIG_FILE_PATH
+              value: "{{ include "layer-zero.configVolumePath" . }}/providers.json"
+          ports:
+            - name: "{{ include "layer-zero.serverPortName" . }}"
+              containerPort: {{ .Values.service.port }}
+              protocol: "TCP"
+        {{- with .Values.metrics }}
+          {{- if .enabled }}
+            - name: "{{ include "layer-zero.metricsPortName" . }}"
+              containerPort: {{ .port }}
+              protocol: "TCP"
+          {{- end }}
+        {{- end }}
+        {{- with .Values.resources }}
+          resources:
+            {{ toYaml . | nindent 12 | trim }}
+        {{- end }}
+        {{- if .Values.customStartupProbe }}
+          startupProbe:
+            {{ toYaml .Values.customStartupProbe | nindent 12 | trim }}
+        {{- else if .Values.startupProbe.enabled }}
+          startupProbe:
+            tcpSocket:
+                port: {{ .Values.metrics.port }}
+              {{- omit .Values.startupProbe "enabled" | toYaml | nindent 12 }}
+        {{- end }}
+        {{- if .Values.customLivenessProbe }}
+          livenessProbe:
+            {{ toYaml .Values.customLivenessProbe | nindent 12 | trim }}
+        {{- end }}
+        {{- if .Values.customReadinessProbe }}
+          readinessProbe:
+            {{ toYaml .Values.customReadinessProbe | nindent 12 | trim }}
+        {{- else if .Values.readinessProbe.enabled }}
+          readinessProbe:
+            {{- omit .Values.readinessProbe "enabled" | toYaml | nindent 12 }}
+            httpGet:
+              port: {{ .Values.service.port }}
+        {{- end }}
+      volumes:
+        - name: {{ include "layer-zero.secretVolumeName" . }}
+          secret:
+            secretName: "{{ include "common.names.fullname" . }}"
+            items:
+              - key: "walletMnemonicMapping.json"
+                path: "walletMnemonicMapping.json"
+        - name: "{{ include "layer-zero.configVolumeName" . }}"
+          configMap:
+            name: "{{ include "common.names.fullname" . }}"
+            items:
+              - key: "providers.json"
+                path: "providers.json"
+              - key: "wallets.json"
+                path: "wallets.json"
+...

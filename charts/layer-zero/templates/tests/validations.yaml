@@ -1,0 +1,3 @@
+{{ if and (not .Values.metrics.enabled) (.Values.metrics.serviceMonitor.enabled) }}
+  {{ fail "If metrics.serviceMonitor.enabled is true, metrics.enabled must be true!" }}
+{{ end }}

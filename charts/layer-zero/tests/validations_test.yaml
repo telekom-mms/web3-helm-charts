@@ -1,0 +1,33 @@
+# yamllint disable rule:line-length
+---
+suite: "Test Validations"
+templates:
+  - "tests/validations.yaml"
+release:
+  name: "test-release"
+  namespace: "test-namespace"
+tests:
+  - it: "Should fail to render if metrics.serviceMonitor.enabled is true, but metrics.enabled is false"
+    set:
+      metrics:
+        serviceMonitor:
+          enabled: true
+        enabled: false
+    asserts:
+      - failedTemplate:
+          errorMessage: "If metrics.serviceMonitor.enabled is true, metrics.enabled must be true!"
+  - it: "Should fail to render if availableChainsAndRPCEndpoints is empty"
+    asserts:
+      - failedTemplate:
+          errorMessage: "availableChainsAndRPCEndpoints must not be empty!"
+  - it: "Should fail to render if service.type is LoadBalancer, but service.annotations.kubernetes.io/elb.autocreate is not set"
+  - it: "Should fail to render if wallets is not set"
+    asserts:
+      - failedTemplate:
+          errorMessage: "wallets must be set!"
+  - it: "Should fail to render if walletMnemonicMapping is not set"
+    asserts:
+      - failedTemplate:
+          errorMessage: "walletMnemonicMapping must be set!"
+...
+# yamllint enable rule:line-length
