@@ -254,9 +254,10 @@ Response: {
 The following table lists the configurable parameters of
 the `layer-zero-chart` and their default values.
 
+-<!-- markdownlint-disable MD013 -->
+
 ## Parameters
 
-<!-- markdownlint-disable MD013 -->
 ### Image parameters
 
 | Name               | Description                         | Value                               |
@@ -349,11 +350,11 @@ the `layer-zero-chart` and their default values.
 | `customStartupProbe`                          | Custom startup probe overwriting the default startup probe     | `{}`               |
 | `customLivenessProbe`                         | Custom liveness probe overwriting the default liveness probe   | `{}`               |
 | `readinessProbe.enabled`                      | Enable readiness probe                                         | `true`             |
-| `readinessProbe.initialDelaySeconds`          | Initial delay for readiness probe                              | `5`                |
+| `readinessProbe.initialDelaySeconds`          | Initial delay for readiness probe                              | `20`               |
 | `readinessProbe.timeoutSeconds`               | Timeout for readiness probe                                    | `1`                |
-| `readinessProbe.periodSeconds`                | Period for readiness probe                                     | `10`               |
+| `readinessProbe.periodSeconds`                | Period for readiness probe                                     | `60`               |
 | `readinessProbe.successThreshold`             | Success threshold for readiness probe                          | `1`                |
-| `readinessProbe.failureThreshold`             | Failure threshold for readiness probe                          | `10`               |
+| `readinessProbe.failureThreshold`             | Failure threshold for readiness probe                          | `5`                |
 | `readinessProbe.httpGet.path`                 | HTTP path for readiness probe                                  | `/`                |
 | `readinessProbe.httpGet.httpHeaders[0].name`  | HTTP header name                                               | `Accept`           |
 | `readinessProbe.httpGet.httpHeaders[0].value` | HTTP header value                                              | `application/json` |
@@ -402,7 +403,6 @@ the `layer-zero-chart` and their default values.
 | `availableChainsAndRPCEndpoints` | `LAYERZERO_AVAILABLE_CHAIN_NAMES` List of available chains and their corresponding RPC endpoints | `{}`      |
 | `walletMnemonicMapping`          | `LAYERZERO_WALLET_MNEMONIC_MAPPING_FILE_PATH` JSON string for wallet mnemonic mapping            | `""`      |
 | `wallets`                        | `LAYERZERO_WALLETS_FILE_PATH` JSON string for wallets                                            | `""`      |
-<!-- markdownlint-enable MD013 -->
 
 ## Unit Tests
 
@@ -421,3 +421,5 @@ Contributions are welcome! Please open an issue or submit a pull request on GitH
 
 This project is licensed under the Apache 2.0 License -
 see the [LICENSE](LICENSE) file for details.
+
+-<!-- markdownlint-enable MD013 -->
