@@ -20,13 +20,13 @@ It can be used to simplify the commands for rendering and deploying the Helm Cha
 ```yaml
 ---
 repositories:
-  - name: "layer-zero-chart"
+  - name: "layer-zero"
     url: "https://telekom-mms.github.io/web3-helm-charts"
 
 releases:
   - name: "layer-zero"
-    chart: "web3-helm-charts/layer-zero"
-    version: "1.0.0"
+    chart: "layer-zero/layer-zero"
+    version: "1.1.0"
     namespace: "layer-zero"
     values:
       - "./values.yaml"
