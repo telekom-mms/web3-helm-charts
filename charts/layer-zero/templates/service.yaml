@@ -1,0 +1,40 @@
+{{- if .Values.metrics.enabled }}
+---
+apiVersion: "v1"
+kind: "Service"
+metadata:
+  name: "{{ include "common.names.fullname" . }}-metrics"
+  labels:
+    {{- include "common.labels.standard" . | nindent 4 }}
+spec:
+  selector:
+    {{- include "common.labels.matchLabels" . | nindent 4 }}
+  type: "ClusterIP"
+  ports:
+    - name: "{{ include "layer-zero.metricsPortName" . }}"
+      port: {{ .Values.metrics.port }}
+      protocol: "TCP"
+      targetPort: "{{ include "layer-zero.metricsPortName" . }}"
+...
+{{- end }}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: "{{ include "common.names.fullname" . }}"
+{{- with .Values.service.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+{{- end }}
+  labels:
+    {{- include "common.labels.standard" . | nindent 4 }}
+spec:
+  selector:
+    {{- include "common.labels.matchLabels" . | nindent 4 }}
+  type: {{ .Values.service.type }}
+  ports:
+    - name: "http"
+      protocol: TCP
+      port: {{ .Values.service.port }}
+...
