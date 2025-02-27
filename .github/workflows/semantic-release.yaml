@@ -13,15 +13,15 @@ on:
 jobs:
   semantic-release:
     permissions:
-      # to be able to publish a GitHub release
+      # To be able to publish a GitHub release
       contents: write
-      # to be able to comment on released issues
+      # To be able to comment on released issues
       issues: write
-      # to be able to comment on released pull requests
+      # To be able to comment on released pull requests
       pull-requests: write
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
@@ -35,12 +35,18 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '23'
+          cache: npm
+
+      - name: Disable Husky
+        run: |
+          echo "HUSKY=0" >> "${GITHUB_ENV}"
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
-      - name: Semantic Release
+      - name: Run Semantic Release
         env:
+          HUSKY: 0  # Ensure Husky is disabled
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npx semantic-release
 ...
