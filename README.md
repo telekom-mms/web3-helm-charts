@@ -25,6 +25,29 @@ helm install <my-release> web3-helm-charts/<chart-name>
 
 Replace `<chart-name>` with the name of the chart you want to deploy.
 
+## Commitizen
+
+To ensure consistent commit messages, we use Commitizen.
+Please follow these steps to set it up:
+
+1. Install Commitizen globally:
+
+    ```bash
+    pip3 install commitizen --break-system-packages
+    ```
+
+2. Install the required dependencies:
+
+    ```bash
+    git config --unset-all core.hooksPath
+    ```
+
+3. Install the pre-commit hooks:
+
+    ```bash
+    pre-commit install --hook-type commit-msg
+    ```
+
 ## Contributing
 
 We welcome contributions! Please follow these steps to contribute:
