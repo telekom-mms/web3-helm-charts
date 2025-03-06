@@ -298,6 +298,17 @@ the `layer-zero-chart` and their default values.
 | `service.port`        | `SERVER_PORT` Service port                                             | `8081`      |
 | `service.annotations` | Annotations for the service                                            | `{}`        |
 
+### Ingress parameters
+
+| Name                       | Description                                  | Value                    |
+| -------------------------- | -------------------------------------------- | ------------------------ |
+| `ingress.enabled`          | Enable ingress controller resource           | `false`                  |
+| `ingress.annotations`      | Annotations for the Ingress resource         | `{}`                     |
+| `ingress.ingressClassName` | Ingress class name                           | `nginx`                  |
+| `ingress.pathType`         | Ingress path type                            | `ImplementationSpecific` |
+| `ingress.hosts`            | Hosts Configuration for the Ingress resource | `[]`                     |
+| `ingress.tls`              | TLS configuration for the Ingress resource   | `[]`                     |
+
 ### Network Policy parameters
 
 | Name                    | Description                                | Value   |
