@@ -73,4 +73,4 @@ see the [LICENSE](LICENSE) file for details.
 
 ## Contact
 
-For any questions or suggestions, please open an issue or contact us at [](mailto:email@example.com).
+For any questions or suggestions, please open an issue or contact us at [web3-opensource@telekom-mms.com](mailto:web3-opensource@telekom-mms.com).
