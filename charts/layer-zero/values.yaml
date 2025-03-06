@@ -46,6 +46,35 @@ service:
   port: 8081
   annotations: {}
 
+## @section Ingress parameters
+ingress:
+  ## @param ingress.enabled Enable ingress controller resource
+  enabled: false
+  ## @param ingress.annotations Annotations for the Ingress resource
+  annotations: {}
+  ## @param ingress.ingressClassName Ingress class name
+  ingressClassName: "nginx"
+  ## @param ingress.pathType Ingress path type
+  ## Valid options are:
+  ## - ImplementationSpecific
+  ## - Exact
+  ## - Prefix
+  pathType: "ImplementationSpecific"
+  ## @param ingress.hosts [array] Hosts Configuration for the Ingress resource
+  ## e.g.:
+  ## hosts:
+  ##   - host: "chart-example.local"
+  ##     paths:
+  ##       - "/"
+  hosts: []
+  ## @param ingress.tls [array] TLS configuration for the Ingress resource
+  ## e.g.:
+  ## tls:
+  ##   - secretName: "chart-example.local-tls"
+  ##     hosts:
+  ##       - "chart-example.local"
+  tls: []
+
 ## @section Network Policy parameters
 ## @param networkPolicy.enabled Enable creation of NetworkPolicy resources
 networkPolicy:
