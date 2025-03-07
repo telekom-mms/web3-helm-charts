@@ -41,10 +41,12 @@ resources:
 ## @param service.type Kubernetes service type, use "LoadBalancer" for external communication
 ## @param service.port `SERVER_PORT` Service port
 ## @param service.annotations Annotations for the service
+## @param service.keepResourcePolicy If type is "LoadBalancer" and this is set to true, the service will not be deleted when the chart is uninstalled
 service:
   type: "ClusterIP"
   port: 8081
   annotations: {}
+  keepResourcePolicy: false
 
 ## @section Ingress parameters
 ingress:
