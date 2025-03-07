@@ -292,11 +292,12 @@ the `layer-zero-chart` and their default values.
 
 ### Service parameters
 
-| Name                  | Description                                                            | Value       |
-| --------------------- | ---------------------------------------------------------------------- | ----------- |
-| `service.type`        | Kubernetes service type, use "LoadBalancer" for external communication | `ClusterIP` |
-| `service.port`        | `SERVER_PORT` Service port                                             | `8081`      |
-| `service.annotations` | Annotations for the service                                            | `{}`        |
+| Name                         | Description                                                                                                      | Value       |
+| ---------------------------- | ---------------------------------------------------------------------------------------------------------------- | ----------- |
+| `service.type`               | Kubernetes service type, use "LoadBalancer" for external communication                                           | `ClusterIP` |
+| `service.port`               | `SERVER_PORT` Service port                                                                                       | `8081`      |
+| `service.annotations`        | Annotations for the service                                                                                      | `{}`        |
+| `service.keepResourcePolicy` | If type is "LoadBalancer" and this is set to true, the service will not be deleted when the chart is uninstalled | `false`     |
 
 ### Ingress parameters
 

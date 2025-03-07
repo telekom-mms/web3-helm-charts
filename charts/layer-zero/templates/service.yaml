@@ -23,8 +23,11 @@ apiVersion: v1
 kind: Service
 metadata:
   name: "{{ include "common.names.fullname" . }}"
-{{- with .Values.service.annotations }}
   annotations:
+  {{- if and .Values.service.keepResourcePolicy (eq .Values.service.type "LoadBalancer") }}
+    helm.sh/resource-policy: "keep"
+  {{- end }}
+{{- with .Values.service.annotations }}
     {{- toYaml . | nindent 4 }}
 {{- end }}
   labels:
