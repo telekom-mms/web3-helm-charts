@@ -81,7 +81,7 @@ spec:
             - name: SERVER_PORT
               value: {{ .Values.service.port | quote }}
             - name: PROVIDER_CONFIG_TYPE
-              value: {{ .Values.providerConfigType }}
+              value: "LOCAL"
             - name: SIGNER_TYPE
               value: "LOCAL_MNEMONIC"
             - name: LAYERZERO_SUPPORTED_ULN_VERSIONS
