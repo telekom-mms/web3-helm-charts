@@ -188,18 +188,23 @@ metrics:
 ####################################
 
 ## @section Custom layer-zero configuration
-## @param providerConfigType `PROVIDER_CONFIG_TYPE` LayerZero Provider Configuration Type
 ## @param layerZeroEnvironment `LAYERZERO_ENVIRONMENT` Environment e.g. mainnet, testnet, etc.
-## @param layerZeroSupportedULNVersions `LAYERZERO_SUPPORTED_ULN_VERSIONS` List of supported ULN versions to be used by the client
-## @param availableChainsAndRPCEndpoints `LAYERZERO_AVAILABLE_CHAIN_NAMES` List of available chains and their corresponding RPC endpoints
-## @param walletMnemonicMapping `LAYERZERO_WALLET_MNEMONIC_MAPPING_FILE_PATH` JSON string for wallet mnemonic mapping
-## @param wallets `LAYERZERO_WALLETS_FILE_PATH` JSON string for wallets
-providerConfigType: "LOCAL"
 layerZeroEnvironment: "testnet"
+## @param layerZeroSupportedULNVersions `LAYERZERO_SUPPORTED_ULN_VERSIONS` List of supported ULN versions to be used by the client
 layerZeroSupportedULNVersions:
   - "V2"
+## @param availableChainsAndRPCEndpoints List of available chains and their corresponding RPC endpoints
+## `LAYERZERO_AVAILABLE_CHAIN_NAMES` List of available chains and their corresponding RPC endpoints
+## e.g.:
+## availableChainsAndRPCEndpoints:
+##   ethereum:
+##     uris:
+##       - "https://<ETHEREUM_RPC_ENDPOINT>"
+##     quorum: 1
 availableChainsAndRPCEndpoints: {}
+## @param walletMnemonicMapping `LAYERZERO_WALLET_MNEMONIC_MAPPING_FILE_PATH` JSON string for wallet mnemonic mapping
 walletMnemonicMapping: ""
+## @param wallets `LAYERZERO_WALLETS_FILE_PATH` JSON string for wallets
 wallets: ""
 ...
 # yamllint enable rule:line-length
