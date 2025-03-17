@@ -10,6 +10,9 @@ metadata:
 {{- end }}
   labels:
     {{- include "common.labels.standard" . | nindent 4 }}
+  {{- with .Values.ingress.extraLabels }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 spec:
   ingressClassName: {{ .Values.ingress.ingressClassName | quote }}
   {{- if .Values.ingress.tls }}
