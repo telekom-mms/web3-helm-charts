@@ -264,7 +264,7 @@ the `layer-zero-chart` and their default values.
 | ------------------ | ----------------------------------- | ----------------------------------- |
 | `image.registry`   | The Docker registry for the image   | `us-east1-docker.pkg.dev/lz-docker` |
 | `image.repository` | The Docker repository for the image | `gasolina/gasolina`                 |
-| `image.tag`        | The Docker image tag                | `1.1.15`                            |
+| `image.tag`        | The Docker image tag                | `1.1.17`                            |
 | `image.pullPolicy` | The image pull policy               | `IfNotPresent`                      |
 
 ### Deployment parameters
@@ -305,6 +305,7 @@ the `layer-zero-chart` and their default values.
 | -------------------------- | -------------------------------------------- | ------------------------ |
 | `ingress.enabled`          | Enable ingress controller resource           | `false`                  |
 | `ingress.annotations`      | Annotations for the Ingress resource         | `{}`                     |
+| `ingress.extraLabels`      | Additional labels for the Ingress resource   | `{}`                     |
 | `ingress.ingressClassName` | Ingress class name                           | `nginx`                  |
 | `ingress.pathType`         | Ingress path type                            | `ImplementationSpecific` |
 | `ingress.hosts`            | Hosts Configuration for the Ingress resource | `[]`                     |

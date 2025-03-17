@@ -54,6 +54,8 @@ ingress:
   enabled: false
   ## @param ingress.annotations Annotations for the Ingress resource
   annotations: {}
+  ## @param ingress.extraLabels Additional labels for the Ingress resource
+  extraLabels: {}
   ## @param ingress.ingressClassName Ingress class name
   ingressClassName: "nginx"
   ## @param ingress.pathType Ingress path type
