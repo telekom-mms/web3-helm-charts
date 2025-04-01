@@ -1,0 +1,121 @@
+---
+apiVersion: "{{ include "common.capabilities.deployment.apiVersion" . }}"
+kind: "Deployment"
+metadata:
+  name: "{{ include "common.names.fullname" . }}"
+  labels:
+    {{- include "common.labels.standard" . | nindent 4 }}
+  {{- with .Values.extraLabels }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "common.labels.matchLabels" . | nindent 6 }}
+  replicas: {{ .Values.replicaCount }}
+  strategy: {{- toYaml .Values.updateStrategy | nindent 4 }}
+  template:
+    metadata:
+      labels:
+        {{- include "common.labels.matchLabels" . | nindent 8 }}
+      {{- with .Values.extraLabels }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    spec:
+    {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+        {{ toYaml . | nindent 8 | trim }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+        {{ toYaml . | nindent 8 | trim }}
+    {{- end }}
+    {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{ toYaml . | nindent 8 | trim }}
+    {{- end }}
+    {{- with .Values.securityContext }}
+      securityContext:
+        {{ toYaml . | nindent 8 | trim }}
+    {{- end }}
+    {{- with .Values.topologySpreadConstraints }}
+      topologySpreadConstraints:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.priorityClassName }}
+      priorityClassName: {{ . }}
+    {{- end }}
+      terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
+      containers:
+        - name: "validator-watcher"
+          image: "{{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: "{{ .Values.image.pullPolicy }}"
+        {{- with .Values.podSecurityContext }}
+          securityContext:
+            {{ toYaml . | nindent 12 | trim }}
+        {{- end }}
+        {{- if .Values.diagnosticMode.enabled }}
+          command: ["sleep"]
+          args: ["infinity"]
+        {{- else }}
+          args:
+          {{- range .Values.nodeUrls }}
+            - "--node={{ . }}"
+          {{- end }}
+          {{- if .Values.validator }}
+          {{- range .Values.validator }}
+            - "--validator={{ .address }}:{{ .name }}"
+          {{- end }}
+          {{- end }}
+          {{- if .Values.prometheusNamespace }}
+            - "--namespace={{ .Values.prometheusNamespace }}"
+          {{- end }}
+            - "--http-addr={{ .Values.server.httpAddr }}:{{ .Values.server.port }}"
+            - "--no-upgrade={{ .Values.noUpgrade }}"
+            - "--log-level={{ .Values.logLevel }}"
+          {{- range .Values.extraArgs }}
+            {{ . }}
+          {{- end }}
+        {{- end }}
+          ports:
+            - name: "{{ include "cosmos-validator-watcher.servicePortName" . }}"
+              containerPort: {{ .Values.server.port }}
+              protocol: "TCP"
+        {{- with .Values.resources }}
+          resources:
+            {{ toYaml . | nindent 12 | trim }}
+        {{- end }}
+        {{- if .Values.customStartupProbe }}
+          startupProbe:
+            {{ toYaml .Values.customStartupProbe | nindent 12 | trim }}
+        {{- else if .Values.startupProbe.enabled }}
+          startupProbe:
+            tcpSocket:
+                port: {{ .Values.server.port }}
+              {{- omit .Values.startupProbe "enabled" | toYaml | nindent 12 }}
+        {{- end }}
+        {{- if .Values.customLivenessProbe }}
+          livenessProbe:
+            {{ toYaml .Values.customLivenessProbe | nindent 12 | trim }}
+        {{- else if .Values.livenessProbe.enabled }}
+          livenessProbe:
+            {{- omit .Values.livenessProbe "enabled" | toYaml | nindent 12 }}
+            httpGet:
+              port: {{ .Values.server.port }}
+              path: {{ .Values.livenessProbe.httpGet.path | quote}}
+        {{- end }}
+        {{- if .Values.customReadinessProbe }}
+          readinessProbe:
+            {{ toYaml .Values.customReadinessProbe | nindent 12 | trim }}
+        {{- else if .Values.readinessProbe.enabled }}
+          readinessProbe:
+            {{- omit .Values.readinessProbe "enabled" | toYaml | nindent 12 }}
+            httpGet:
+              port: {{ .Values.server.port }}
+              path: {{ .Values.readinessProbe.httpGet.path | quote }}
+        {{- end }}
+...

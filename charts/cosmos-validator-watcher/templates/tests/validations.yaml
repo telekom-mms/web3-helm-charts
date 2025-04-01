@@ -1,0 +1,15 @@
+{{ if empty .Values.nodeUrls }}
+  {{ fail "Value nodeUrls: At least one node url needs to be provided!" }}
+{{ end }}
+
+{{ if or (not .Values.server.httpAddr) (not .Values.server.port) }}
+  {{ fail "Value server.httpAddr and server.port: The HTTP listening address and the port of the application server is required!" }}
+{{ end }}
+
+{{ if not (hasKey .Values "noUpgrade") }}
+  {{ fail "Value noUpgrade: The noUpgrade flag is required!" }}
+{{ end }}
+
+{{ if empty .Values.logLevel }}
+  {{ fail "Value logLevel: The log level is required!" }}
+{{ end }}
