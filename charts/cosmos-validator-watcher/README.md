@@ -1,6 +1,14 @@
 # cosmos-validator-watcher-chart
 
-cosmos-validator-watcher-chart is the Helm Chart used for deploying the [cosmos-validator-watcher](https://github.com/kilnfi/cosmos-validator-watcher).
+cosmos-validator-watcher-chart is a Helm chart used for deploying the
+[cosmos-validator-watcher](https://github.com/kilnfi/cosmos-validator-watcher)
+in K8s.
+
+## Requirements
+
+* [prometheus operator](https://github.com/prometheus-operator) or
+* [kube-prometheus](https://github.com/prometheus-operator/kube-prometheus)
+as fullstack solution
 
 ## Architecture
 
@@ -9,7 +17,7 @@ cosmos-validator-watcher-chart is the Helm Chart used for deploying the [cosmos-
 ## Usage
 
 This chart is not supposed to be deployed with the default values contained
-in the `values.yaml`.
+in the `values.yaml`. Please adapt accordingly.
 
 ### Using Helmfile
 
@@ -47,7 +55,7 @@ readme-generator --readme README.md --values values.yaml
 The following table lists the configurable parameters of the
 `cosmos-validator-watcher` and their default values.
 
--<!-- markdownlint-disable MD013 -->
+<!-- markdownlint-disable MD013 -->
 
 ## Parameters
 
@@ -198,7 +206,7 @@ The following table lists the configurable parameters of the
 
 ## Unit Tests
 
-This Helm Chart contains Unit Tests which can be executed with [helm-unittest](https://github.com/helm-unittest/helm-unittest).
+This Helm Chart contains unit tests which can be executed with [helm-unittest](https://github.com/helm-unittest/helm-unittest).
 
 ```shell
 helm plugin install https://github.com/helm-unittest/helm-unittest.git
@@ -214,4 +222,4 @@ Contributions are welcome! Please open an issue or submit a pull request on GitH
 This project is licensed under the Apache 2.0 License -
 see the [LICENSE](LICENSE) file for details.
 
--<!-- markdownlint-enable MD013 -->
+<!-- markdownlint-enable MD013 -->
