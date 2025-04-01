@@ -1,0 +1,8 @@
+---
+releases:
+  - name: "cosmos-validator-watcher"
+    namespace: "cosmos"
+    chart: "./"
+    values:
+      - "./values.yaml"
+...
