@@ -1,0 +1,184 @@
+# yamllint disable rule:line-length
+---
+## @section Global parameters (inherited from bitnami/common)
+## @param nameOverride The name of the release
+## @param fullnameOverride The full name of the release
+nameOverride: ""
+fullnameOverride: ""
+
+## @section Image parameters
+## @param image.registry The Docker registry for the image
+## @param image.repository The Docker repository for the image
+## @param image.tag The Docker image tag
+## @param image.pullPolicy The image pull policy
+image:
+  registry: "ghcr.io"
+  repository: "kilnfi/cosmos-validator-watcher"
+  tag: "v0.16.0"
+  pullPolicy: "IfNotPresent"
+
+## @section Deployment parameters
+## @param replicaCount The number of replicas
+## @param updateStrategy.type The update strategy type of the StatefulSet / Deployment
+## @param updateStrategy.rollingUpdate The rolling update configuration of the StatefulSet / Deployment
+replicaCount: 1
+updateStrategy:
+  type: "RollingUpdate"
+  rollingUpdate: {}
+
+## @section Image pull secrets
+## @param imagePullSecrets The secrets for pulling images from a private registry
+imagePullSecrets: []
+
+## @section Resource parameters
+## @param resources.requests.cpu CPU resource requests
+## @param resources.requests.memory Memory resource requests
+## @param resources.limits.cpu CPU resource limits
+## @param resources.limits.memory Memory resource limits
+resources:
+  requests:
+    cpu: "50m"
+    memory: "100Mi"
+  limits:
+    cpu: "50m"
+    memory: "100Mi"
+
+## @section Service parameters
+## @param service.port The port of the service
+service:
+  port: 8080
+
+## @section Affinity parameters
+## @param affinity Affinity for pod assignment
+affinity: {}
+
+## @section Node selector parameters
+## @param nodeSelector Node labels for pod assignment
+nodeSelector: {}
+
+## @section Tolerations parameters
+## @param tolerations Tolerations for pod assignment
+tolerations: {}
+
+## @section Security context parameters
+## @param podSecurityContext.readOnlyRootFilesystem Set the root filesystem to read-only
+## @param securityContext.runAsNonRoot Run containers as non-root user
+## @param securityContext.runAsUser User ID to run the container
+## @param securityContext.runAsGroup Group ID to run the container
+podSecurityContext:
+  readOnlyRootFilesystem: true
+securityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
+  runAsGroup: 1000
+
+## @section Topology Spread Constraints parameters
+## @param topologySpreadConstraints Pod Topology Spread Constraints
+topologySpreadConstraints: []
+
+## @section Probe parameters
+## @param startupProbe.enabled Enable startup probe
+## @param startupProbe.initialDelaySeconds Initial delay for startup probe
+## @param startupProbe.timeoutSeconds Timeout for startup probe
+## @param startupProbe.periodSeconds Period for startup probe
+## @param startupProbe.successThreshold Success threshold for startup probe
+## @param startupProbe.failureThreshold Failure threshold for startup probe
+## @param customStartupProbe Custom startup probe overwriting the default startup probe
+## @param livenessProbe.enabled Enable liveness probe
+## @param livenessProbe.initialDelaySeconds Initial delay for liveness probe
+## @param livenessProbe.periodSeconds Period for liveness probe
+## @param livenessProbe.timeoutSeconds Timeout for liveness probe
+## @param livenessProbe.successThreshold Success threshold for liveness probe
+## @param livenessProbe.failureThreshold Failure threshold for liveness probe
+## @param livenessProbe.httpGet.path HTTP path for liveness probe
+## @param livenessProbe.httpGet.port Port for the liveness probe which should be the same as the server port
+## @param customLivenessProbe Custom liveness probe overwriting the default liveness probe
+## @param readinessProbe.enabled Enable readiness probe
+## @param readinessProbe.initialDelaySeconds Initial delay for readiness probe
+## @param readinessProbe.periodSeconds Period for readiness probe
+## @param readinessProbe.timeoutSeconds Timeout for readiness probe
+## @param readinessProbe.successThreshold Success threshold for readiness probe
+## @param readinessProbe.failureThreshold Failure threshold for readiness probe
+## @param readinessProbe.httpGet.path HTTP path for readiness probe
+## @param readinessProbe.httpGet.port Port for the readiness probe which should be the same as the server port
+## @param customReadinessProbe Custom readiness probe overwriting the default readiness probe
+startupProbe:
+  enabled: false
+  initialDelaySeconds: 5
+  timeoutSeconds: 1
+  periodSeconds: 20
+  successThreshold: 1
+  failureThreshold: 10
+customStartupProbe: {}
+livenessProbe:
+  enabled: true
+  initialDelaySeconds: 10
+  periodSeconds: 20
+  timeoutSeconds: 5
+  successThreshold: 1
+  failureThreshold: 3
+  httpGet:
+    path: "/live"
+    port: 8080
+customLivenessProbe: {}
+readinessProbe:
+  enabled: true
+  initialDelaySeconds: 5
+  periodSeconds: 20
+  timeoutSeconds: 1
+  successThreshold: 1
+  failureThreshold: 5
+  httpGet:
+    path: "/ready"
+    port: 8080
+customReadinessProbe: {}
+
+## @section Termination parameters
+## @param terminationGracePeriodSeconds Termination grace period in seconds
+terminationGracePeriodSeconds: 30
+
+## @section Diagnostic mode parameters
+## @param diagnosticMode.enabled Enable diagnostic mode (container starts without running process)
+diagnosticMode:
+  enabled: false
+
+## @section Extra parameters
+## @param extraLabels Additional labels to add to the Statefulset/Deployment
+## @param extraArgs Extra arguments to pass to the container arguments
+extraLabels: {}
+extraArgs: []
+
+## @section Priority parameters
+## @param priorityClassName Priority class name for the pods
+priorityClassName: ""
+
+###################################################
+##                                               ##
+## Custom cosmos-validator-watcher configuration ##
+##                                               ##
+###################################################
+
+## @section Custom validator-watcher configuration
+## @param server.httpAddr The HTTP listening address of the application server
+## @param server.port The port of the application server
+server:
+  httpAddr: "0.0.0.0"
+  port: "8080"
+## @param nodeUrls The list of node URLs to connect
+nodeUrls: []
+## @param validator The list of validators to watch
+## e.g.:
+## validator:
+##   - address: "<VALIDATOR_HEX_ADDRESS>"
+##     name: "<SELF_DEFINED_VALIDATOR_NAME>"
+validator: []
+## @param noUpgrade Disable check for upcoming upgrade
+noUpgrade: false
+## @param prometheusNamespace The namespace for Prometheus metrics
+## e.g.:
+## prometheusNamespace: "cosmos_watcher"
+prometheusNamespace: ""
+## @param logLevel The log level for the application
+logLevel: "info"
+...
+# yamllint enable rule:line-length
