@@ -1,0 +1,65 @@
+# yamllint disable rule:line-length
+---
+suite: "Test Validations"
+templates:
+  - "tests/validations.yaml"
+release:
+  name: "test-release"
+  namespace: "test-namespace"
+tests:
+  - it: "Should fail to render if nodeUrls is empty"
+    set:
+      server:
+        httpAddr: "0.0.0.0"
+        port: "8080"
+      noUpgrade: true
+      logLevel: "info"
+    asserts:
+      - failedTemplate:
+          errorMessage: "Value nodeUrls: At least one node url needs to be provided!"
+  - it: "Should fail to render if server.httpAddr is empty"
+    set:
+      nodeUrls: ["http://node1.example.com"]
+      server:
+        httpAddr: ""
+        port: "8080"
+      noUpgrade: true
+      logLevel: "info"
+    asserts:
+      - failedTemplate:
+          errorMessage: "Value server.httpAddr and server.port: The HTTP listening address and the port of the application server is required!"
+  - it: "Should fail to render if server.port is empty"
+    set:
+      nodeUrls: ["http://node1.example.com"]
+      server:
+        httpAddr: "0.0.0.0"
+        port: ""
+      noUpgrade: true
+      logLevel: "info"
+    asserts:
+      - failedTemplate:
+          errorMessage: "Value server.httpAddr and server.port: The HTTP listening address and the port of the application server is required!"
+  - it: "Should fail to render if noUpgrade is not set"
+    set:
+      nodeUrls: ["http://node1.example.com"]
+      server:
+        httpAddr: "0.0.0.0"
+        port: "8080"
+      logLevel: "info"
+      noUpgrade: null
+    asserts:
+      - failedTemplate:
+          errorMessage: "Value noUpgrade: The noUpgrade flag is required!"
+  - it: "Should fail to render if logLevel is empty"
+    set:
+      nodeUrls: ["http://node1.example.com"]
+      server:
+        httpAddr: "0.0.0.0"
+        port: "8080"
+      noUpgrade: true
+      logLevel: ""
+    asserts:
+      - failedTemplate:
+          errorMessage: "Value logLevel: The log level is required!"
+...
+# yamllint enable rule:line-length
