@@ -14,7 +14,7 @@ fullnameOverride: ""
 image:
   registry: "ghcr.io"
   repository: "kilnfi/cosmos-validator-watcher"
-  tag: "v0.16.0"
+  tag: "v0.16.2"
   pullPolicy: "IfNotPresent"
 
 ## @section Deployment parameters
