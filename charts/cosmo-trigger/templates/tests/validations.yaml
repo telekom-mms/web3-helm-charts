@@ -1,0 +1,3 @@
+{{ if and (not .Values.envSecrets.cicdPersonalAccessToken) (not .Values.envSecrets.cicdTriggerToken) }}
+  {{ fail ".envSecrets.cicdPersonalAccessToken and .Values.envSecrets.cicdTriggerToken must be set" }}
+{{ end }}
