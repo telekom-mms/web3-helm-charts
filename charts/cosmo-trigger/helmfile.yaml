@@ -1,0 +1,7 @@
+---
+releases:
+  - name: "cosmo-trigger"
+    namespace: "cosmos"
+    chart: "./"
+    values:
+      - "./values.yaml"

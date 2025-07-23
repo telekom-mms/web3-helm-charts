@@ -1,0 +1,123 @@
+---
+apiVersion: "{{ include "common.capabilities.deployment.apiVersion" . }}"
+kind: "Deployment"
+metadata:
+  name: "{{ include "common.names.fullname" . }}"
+  labels:
+    {{- include "common.labels.standard" . | nindent 4 }}
+  {{- with .Values.extraLabels }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "common.labels.matchLabels" . | nindent 6 }}
+  replicas: {{ .Values.replicaCount }}
+  strategy: {{- toYaml .Values.updateStrategy | nindent 4 }}
+  template:
+    metadata:
+      labels:
+        {{- include "common.labels.matchLabels" . | nindent 8 }}
+      {{- with .Values.extraLabels }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    spec:
+    {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+        {{- tpl (toYaml .) $ | nindent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+        {{- tpl (toYaml .) $ | nindent 8 }}
+    {{- end }}
+    {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- tpl (toYaml .) $ | nindent 8 }}
+    {{- end }}
+    {{- with .Values.securityContext }}
+      securityContext:
+        {{- omit . "seLinuxOptions" | toYaml | nindent 8 }}
+        {{- with .seLinuxOptions }}
+        seLinuxOptions:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+    {{- end }}
+    {{- with .Values.topologySpreadConstraints }}
+      topologySpreadConstraints:
+        {{- tpl (toYaml .) $ | nindent 8 }}
+    {{- end }}
+    {{- with .Values.priorityClassName }}
+      priorityClassName: {{ . }}
+    {{- end }}
+      terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
+      containers:
+        - name: "cosmo-trigger"
+          image: "{{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: "{{ .Values.image.pullPolicy }}"
+        {{- /* Apply Container-level security context defined in values.yaml (PSS Restricted) */}}
+        {{- with .Values.containerSecurityContext }}
+          securityContext:
+            {{- toYaml . | nindent 12 }}
+        {{- end }}
+        {{- if .Values.diagnosticMode.enabled }}
+          command: ["sleep"]
+          args: ["infinity"]
+        {{- else }}
+          args:
+          {{- range .Values.extraArgs }}
+            {{ . }}
+          {{- end }}
+        {{- end }}
+          env:
+            # Standard environment variables from values.yaml
+            {{- range $key, $value := .Values.env }}
+            - name: {{ $key | quote }}
+              value: {{ if kindIs "map" $value }}{{ $value | toJson | quote }}{{ else }}{{ $value | quote }}{{ end }}
+            {{- end }}
+
+            # Sensitive environment variables from Kubernetes Secrets
+            {{- if .Values.envSecrets.cicdTriggerToken }}
+            - name: CICD_TRIGGER_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: "{{ include "common.names.fullname" . }}"
+                  key: {{ include "cosmo-trigger.secretEnvTriggerTokenName" . | quote }}
+            {{- end }}
+
+            {{- if and .Values.envSecrets.cicdPersonalAccessToken }}
+            - name: CICD_PERSONAL_ACCESS_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: "{{ include "common.names.fullname" . }}"
+                  key: {{ include "cosmo-trigger.secretEnvPersonalAccessTokenName" . | quote }}
+            {{- end }}
+
+            # Extra environment variables from values
+            {{- range $key, $value := .Values.extraEnvVars }}
+            - name: {{ $key | quote }}
+              value: {{ $value | quote }}
+            {{- end }}
+          ports:
+        {{- with .Values.service }}
+          {{- if .enabled }}
+            - name: "http"
+              containerPort: {{ .port }}
+              protocol: "TCP"
+          {{- end }}
+        {{- end }}
+        {{- with .Values.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+        {{- end }}
+        {{- if .Values.customReadinessProbe }}
+          readinessProbe:
+            {{- tpl (toYaml .Values.customReadinessProbe) $ | nindent 12 }}
+        {{- else if .Values.readinessProbe.enabled }}
+          readinessProbe:
+            {{- omit .Values.readinessProbe "enabled" | toYaml | nindent 12 }}
+        {{- end }}
+...

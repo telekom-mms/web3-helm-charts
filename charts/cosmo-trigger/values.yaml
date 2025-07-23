@@ -1,0 +1,188 @@
+# yamllint disable rule:line-length
+---
+## @section Global parameters (inherited from bitnami/common)
+## @param nameOverride The name of the release
+## @param fullnameOverride The full name of the release
+nameOverride: ""
+fullnameOverride: ""
+
+## @section Image parameters
+## @param image.registry The Docker registry for the image
+## @param image.repository The Docker repository for the image
+## @param image.tag The Docker image tag
+## @param image.pullPolicy The image pull policy
+image:
+  registry: ""
+  repository: ""
+  tag: "1.0.0"
+  pullPolicy: "IfNotPresent"
+
+## @section Deployment parameters
+## @param replicaCount The number of replicas
+## @param updateStrategy.type The update strategy type of the StatefulSet / Deployment
+## @param updateStrategy.rollingUpdate The rolling update configuration of the StatefulSet / Deployment
+replicaCount: 1
+updateStrategy:
+  type: "RollingUpdate"
+  rollingUpdate: {}
+
+## @section Image pull secrets
+## @param imagePullSecrets The secrets for pulling images from a private registry
+imagePullSecrets: []
+
+## @section Resource parameters
+## @param resources.requests.cpu CPU resource requests
+## @param resources.requests.memory Memory resource requests
+## @param resources.limits.cpu CPU resource limits
+## @param resources.limits.memory Memory resource limits
+resources:
+  requests:
+    cpu: "100m"
+    memory: "250Mi"
+  limits:
+    cpu: "250m"
+    memory: "250Mi"
+
+## @section Service parameters
+## @param service.enabled Enable or disable the service
+## @param service.type The type of the service (ClusterIP or LoadBalancer)
+## @param service.port The port of the service
+## @param service.annotations Annotations for the service
+## @param service.keepResourcePolicy Keep resource policy for the service
+service:
+  enabled: true
+  type: "ClusterIP"
+  port: 8080
+  annotations: {}
+  keepResourcePolicy: false
+
+## @section Affinity parameters
+## @param affinity Affinity for pod assignment
+affinity: {}
+
+## @section Node selector parameters
+## @param nodeSelector Node labels for pod assignment
+nodeSelector: {}
+
+## @section Tolerations parameters
+## @param tolerations Tolerations for pod assignment
+tolerations: {}
+
+## @section Security context parameters
+securityContext:
+  ## @param securityContext.runAsNonRoot Run containers as non-root user
+  runAsNonRoot: true
+  ## @param securityContext.runAsUser User ID to run the container
+  runAsUser: 1001
+  ## @param securityContext.runAsGroup Group ID to run the container
+  runAsGroup: 1001
+  ## @param securityContext.fsGroup Group ID for the filesystem
+  fsGroup: 1001
+  seccompProfile:
+    ## @param securityContext.seccompProfile.type Seccomp profile for the container
+    ## Required by Restricted: seccompProfile must be set to RuntimeDefault or Localhost.
+    type: "RuntimeDefault"
+  ## @param securityContext.seLinuxOptions Optional SELinux options for SELinux-enabled nodes.
+  ## Baseline/Restricted PSS have specific requirements for SELinux types if used.
+  ## Leaving this empty or commented out often uses system defaults, which is generally acceptable.
+  ## Ref: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#selinuxoptions-v1-core
+  ## Example for specific SELinux type (ensure it's allowed by Baseline/Restricted):
+  ## seLinuxOptions:
+  ##   type: "container_t"
+  seLinuxOptions: {}
+
+## @section Container Security Context parameters
+containerSecurityContext:
+  ## @param containerSecurityContext.allowPrivilegeEscalation Allow privilege escalation
+  ## Required by Restricted: Prevent processes from gaining more privileges than their parent.
+  allowPrivilegeEscalation: false
+  capabilities:
+    ## @param containerSecurityContext.capabilities.drop Drop all default capabilities
+    ## Required by Restricted
+    drop:
+      - "ALL"
+    ## @param containerSecurityContext.capabilities.add Add specific capabilities
+    ## Required by Restricted: Only allow adding NET_BIND_SERVICE if needed, otherwise empty.
+    add: []
+  ## @param containerSecurityContext.readOnlyRootFilesystem Set the root filesystem to read-only
+  ## Recommended hardening: Make the root filesystem read-only.
+  ## May require adjustments if the application needs to write to the root filesystem.
+  ## Consider using emptyDir volumes for writable temporary directories.
+  readOnlyRootFilesystem: true
+
+## @section Topology Spread Constraints parameters
+## @param topologySpreadConstraints Pod Topology Spread Constraints
+topologySpreadConstraints: []
+
+## @section Readiness Probe parameters
+## @param readinessProbe.enabled Enable readiness probe
+## @param readinessProbe.httpGet.path HTTP path for readiness probe
+## @param readinessProbe.httpGet.port Port for the readiness probe which should be the same as the server port
+## @param readinessProbe.initialDelaySeconds Initial delay for readiness probe
+## @param readinessProbe.timeoutSeconds Timeout for readiness probe
+## @param readinessProbe.periodSeconds Period for readiness probe
+## @param readinessProbe.successThreshold Success threshold for readiness probe
+## @param readinessProbe.failureThreshold Failure threshold for readiness probe
+## @param customReadinessProbe Custom readiness probe overwriting the default readiness probe
+readinessProbe:
+  enabled: true
+  httpGet:
+    path: "/ready"
+    port: 8080
+  initialDelaySeconds: 5
+  timeoutSeconds: 2
+  periodSeconds: 10
+  successThreshold: 1
+  failureThreshold: 3
+customReadinessProbe: {}
+
+## @section Termination parameters
+## @param terminationGracePeriodSeconds Termination grace period in seconds
+terminationGracePeriodSeconds: 10
+
+## @section Diagnostic mode parameters
+## @param diagnosticMode.enabled Enable diagnostic mode (container starts without running process)
+diagnosticMode:
+  enabled: false
+
+## @section Extra parameters
+## @param extraLabels Additional labels to add to the Statefulset/Deployment
+## @param extraArgs Extra arguments to pass to the container arguments
+extraLabels: {}
+extraArgs: []
+
+## @section Priority parameters
+## @param priorityClassName Priority class name for the pods
+priorityClassName: ""
+
+########################################
+##                                    ##
+## Custom cosmo-trigger configuration ##
+##                                    ##
+########################################
+
+## @section Custom cosmo-trigger configuration via env vars / secrets
+env:
+  ## @param env.APPLICATION_PORT The port on which the application listens
+  APPLICATION_PORT: 8000
+  ## @param env.POLL_INTERVAL_MS The interval at which to poll for updates
+  POLL_INTERVAL_MS: 2000
+  ## @param env.COSMOS_NODE_REST_URL The URL of the Cosmos node REST API (Required)
+  COSMOS_NODE_REST_URL: ""
+  ## @param env.CICD_REPOSITORY_BRANCH The branch of the git repository from which to trigger the update pipeline (Required)
+  CICD_REPOSITORY_BRANCH: "main"
+  ## @param env.CICD_PROJECT_API_URL The API URL for the git repo/project (Required)
+  ## e.g.:
+  ## CICD_PROJECT_API_URL: "https://gitlab.com/api/v4/projects/<YOUR_PROJECT_ID>"
+  CICD_PROJECT_API_URL: ""
+  ## @param env.CICD_VARIABLES Additional variables to pass to the CICD pipeline (Optional)
+  CICD_VARIABLES: {}
+envSecrets:
+  ## @param envSecrets.cicdTriggerToken The to trigger a CICD pipeline (Required)
+  cicdTriggerToken: ""
+  ## @param envSecrets.cicdPersonalAccessToken Personal access token for the git repository (Required)
+  cicdPersonalAccessToken: ""
+## @param extraEnvVars Extra environment variables to be passed to the container
+extraEnvVars: {}
+...
+# yamllint enable rule:line-length
