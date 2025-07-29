@@ -12,9 +12,10 @@ fullnameOverride: ""
 ## @param image.tag The Docker image tag
 ## @param image.pullPolicy The image pull policy
 image:
-  registry: ""
-  repository: ""
-  tag: "1.0.0"
+  registry: "ghcr.io"
+  repository: "telekom-mms/cosmo-trigger"
+  # TODO: Set to a specific tag when the feature is ready
+  tag: "latest"
   pullPolicy: "IfNotPresent"
 
 ## @section Deployment parameters
