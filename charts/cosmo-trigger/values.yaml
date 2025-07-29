@@ -14,8 +14,7 @@ fullnameOverride: ""
 image:
   registry: "ghcr.io"
   repository: "telekom-mms/cosmo-trigger"
-  # TODO: Set to a specific tag when the feature is ready
-  tag: "latest"
+  tag: "1.0.2"
   pullPolicy: "IfNotPresent"
 
 ## @section Deployment parameters
