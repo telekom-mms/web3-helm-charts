@@ -1,7 +1,8 @@
-
+<!-- markdownlint-disable MD033 MD013 -->
 <h1 align="center" style="border-bottom: none">
     <img alt="CosmoTrigger" src="./img/CosmoTrigger-logo.svg" width="80" height="80"><br>CosmoTrigger chart
 </h1>
+<!-- markdownlint-enable MD033 MD013 -->
 
 The CosmoTrigger chart is a Helm chart used for deploying [CosmoTrigger](https://github.com/telekom-mms/cosmo-trigger)
 in K8s. Please find all application relevant information in the respective repository.
