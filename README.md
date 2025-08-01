@@ -25,6 +25,15 @@ helm install <my-release> web3-helm-charts/<chart-name>
 
 Replace `<chart-name>` with the name of the chart you want to deploy.
 
+## Generating Docs for values.yaml
+
+To generate the parameters of `values.yaml`, this project is using [bitnami/readme-generator-for-helm](https://github.com/bitnami/readme-generator-for-helm)
+
+```shell
+npm install -g @bitnami/readme-generator-for-helm
+cd charts/<chart-name> && readme-generator --readme README.md --values values.yaml
+```
+
 ## Commitizen
 
 To ensure consistent commit messages, we use Commitizen.
