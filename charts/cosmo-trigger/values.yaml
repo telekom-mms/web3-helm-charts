@@ -169,8 +169,9 @@ env:
   POLL_INTERVAL_MS: 2000
   ## @param env.COSMOS_NODE_REST_URL The URL of the Cosmos node REST API (Required)
   COSMOS_NODE_REST_URL: ""
-  ## @param env.CICD_REPOSITORY_BRANCH The branch of the git repository from which to trigger the update pipeline (Required)
-  CICD_REPOSITORY_BRANCH: "main"
+  ## @param env.CICD_UPDATE_BRANCH The branch which should be used to trigger the update pipeline (Required)
+  ## e.g. for renovate: "feature/all-dependencies"
+  CICD_UPDATE_BRANCH: "main"
   ## @param env.CICD_PROJECT_API_URL The API URL for the git repo/project (Required)
   ## e.g.:
   ## CICD_PROJECT_API_URL: "https://gitlab.com/api/v4/projects/<YOUR_PROJECT_ID>"

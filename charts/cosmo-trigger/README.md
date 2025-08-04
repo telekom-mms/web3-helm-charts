@@ -69,12 +69,12 @@ The following table lists the configurable parameters of the
 
 ### Image parameters
 
-| Name               | Description                         | Value          |
-| ------------------ | ----------------------------------- | -------------- |
-| `image.registry`   | The Docker registry for the image   | `""`           |
-| `image.repository` | The Docker repository for the image | `""`           |
-| `image.tag`        | The Docker image tag                | `1.0.0`        |
-| `image.pullPolicy` | The image pull policy               | `IfNotPresent` |
+| Name               | Description                         | Value                       |
+| ------------------ | ----------------------------------- | --------------------------- |
+| `image.registry`   | The Docker registry for the image   | `ghcr.io`                   |
+| `image.repository` | The Docker repository for the image | `telekom-mms/cosmo-trigger` |
+| `image.tag`        | The Docker image tag                | `v1.0.2`                    |
+| `image.pullPolicy` | The image pull policy               | `IfNotPresent`              |
 
 ### Deployment parameters
 
@@ -101,12 +101,13 @@ The following table lists the configurable parameters of the
 
 ### Service parameters
 
-| Name                         | Description                          | Value   |
-| ---------------------------- | ------------------------------------ | ------- |
-| `service.enabled`            | Enable or disable the service        | `true`  |
-| `service.port`               | The port of the service              | `8080`  |
-| `service.annotations`        | Annotations for the service          | `{}`    |
-| `service.keepResourcePolicy` | Keep resource policy for the service | `false` |
+| Name                         | Description                                         | Value       |
+| ---------------------------- | --------------------------------------------------- | ----------- |
+| `service.enabled`            | Enable or disable the service                       | `true`      |
+| `service.type`               | The type of the service (ClusterIP or LoadBalancer) | `ClusterIP` |
+| `service.port`               | The port of the service                             | `8080`      |
+| `service.annotations`        | Annotations for the service                         | `{}`        |
+| `service.keepResourcePolicy` | Keep resource policy for the service                | `false`     |
 
 ### Affinity parameters
 
@@ -193,17 +194,17 @@ The following table lists the configurable parameters of the
 
 ### Custom cosmo-trigger configuration via env vars / secrets
 
-| Name                                 | Description                                                                           | Value  |
-| ------------------------------------ | ------------------------------------------------------------------------------------- | ------ |
-| `env.APPLICATION_PORT`               | The port on which the application listens                                             | `8000` |
-| `env.POLL_INTERVAL_MS`               | The interval at which to poll for updates                                             | `2000` |
-| `env.COSMOS_NODE_REST_URL`           | The URL of the Cosmos node REST API (Required)                                        | `""`   |
-| `env.CICD_REPOSITORY_BRANCH`         | The branch of the git repository from which to trigger the update pipeline (Required) | `main` |
-| `env.CICD_PROJECT_API_URL`           | The API URL for the git repo/project (Required)                                       | `""`   |
-| `env.CICD_VARIABLES`                 | Additional variables to pass to the CICD pipeline (Optional)                          | `{}`   |
-| `envSecrets.cicdTriggerToken`        | The to trigger a CICD pipeline (Required)                                             | `""`   |
-| `envSecrets.cicdPersonalAccessToken` | Personal access token for the git repository (Required)                               | `""`   |
-| `extraEnvVars`                       | Extra environment variables to be passed to the container                             | `{}`   |
+| Name                                 | Description                                                               | Value  |
+| ------------------------------------ | ------------------------------------------------------------------------- | ------ |
+| `env.APPLICATION_PORT`               | The port on which the application listens                                 | `8000` |
+| `env.POLL_INTERVAL_MS`               | The interval at which to poll for updates                                 | `2000` |
+| `env.COSMOS_NODE_REST_URL`           | The URL of the Cosmos node REST API (Required)                            | `""`   |
+| `env.CICD_UPDATE_BRANCH`             | The branch which should be used to trigger the update pipeline (Required) | `main` |
+| `env.CICD_PROJECT_API_URL`           | The API URL for the git repo/project (Required)                           | `""`   |
+| `env.CICD_VARIABLES`                 | Additional variables to pass to the CICD pipeline (Optional)              | `{}`   |
+| `envSecrets.cicdTriggerToken`        | The to trigger a CICD pipeline (Required)                                 | `""`   |
+| `envSecrets.cicdPersonalAccessToken` | Personal access token for the git repository (Required)                   | `""`   |
+| `extraEnvVars`                       | Extra environment variables to be passed to the container                 | `{}`   |
 
 ## Unit Tests
 
