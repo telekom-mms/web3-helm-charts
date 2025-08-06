@@ -4,7 +4,8 @@ name: "cosmo-trigger"
 description: "Chart for CosmoTrigger"
 type: "application"
 version: "1.0.0"
-appVersion: "1.0.0"
+# renovate: image=ghcr.io/telekom-mms/cosmo-trigger
+appVersion: "1.0.3"
 dependencies:
   - name: "common"
     repository: "oci://registry-1.docker.io/bitnamicharts"
