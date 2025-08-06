@@ -4,7 +4,8 @@ name: "cosmos-validator-watcher"
 description: "Helm Chart for the cosmos-validator-watcher"
 type: "application"
 version: "1.0.0"
-appVersion: "v0.16.0"
+# renovate: image=ghcr.io/kilnfi/cosmos-validator-watcher
+appVersion: "v0.16.2"
 dependencies:
   - name: "common"
     repository: "oci://registry-1.docker.io/bitnamicharts"
