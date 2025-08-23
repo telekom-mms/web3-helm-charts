@@ -164,7 +164,7 @@ priorityClassName: ""
 ## @section Custom cosmo-trigger configuration via env vars / secrets
 env:
   ## @param env.APPLICATION_PORT The port on which the application listens
-  APPLICATION_PORT: 8000
+  APPLICATION_PORT: 8080
   ## @param env.POLL_INTERVAL_MS The interval at which to poll for updates
   POLL_INTERVAL_MS: 2000
   ## @param env.COSMOS_NODE_REST_URL The URL of the Cosmos node REST API (Required)
