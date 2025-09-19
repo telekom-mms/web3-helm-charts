@@ -8,7 +8,7 @@
 image:
   registry: "us-east1-docker.pkg.dev/lz-docker"
   repository: "gasolina/gasolina"
-  tag: "1.1.34"
+  tag: "1.1.35"
   pullPolicy: "IfNotPresent"
 
 ## @section Deployment parameters
