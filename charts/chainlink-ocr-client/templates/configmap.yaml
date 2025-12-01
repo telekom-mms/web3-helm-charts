@@ -1,0 +1,202 @@
+# Copyright 2025 Deutsche Telekom MMS
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "chainlink-ocr.fullname" . }}
+  labels:
+    {{- include "chainlink-ocr.labels" . | nindent 4 }}
+data:
+  config.toml: |
+    RootDir = '~/.chainlink'
+
+    [Feature]
+    LogPoller = {{ .Values.feature.logPoller }}
+    FeedsManager = {{ .Values.feature.feedsManager }}
+
+    [Log]
+    Level = {{ .Values.log.level | quote }}
+    JSONConsole = {{ .Values.log.jsonConsole }}
+
+    [WebServer]
+    AllowOrigins = {{ .Values.webServer.allowOrigins | quote }}
+    SecureCookies = {{ .Values.webServer.secureCookies }}
+    BridgeCacheTTL = {{ .Values.webServer.bridgeCacheTTL | quote }}
+
+    [WebServer.TLS]
+    HTTPSPort = {{ .Values.webServer.tls.httpsPort }}
+
+    [OCR]
+    Enabled = {{ .Values.ocr.enabled }}
+    KeyBundleID = {{ .Values.ocr.keyBundleId | quote }}
+    TransmitterAddress = {{ .Values.ocr.transmitterAddress | quote }}
+
+    [OCR2]
+    Enabled = {{ .Values.ocr2.enabled }}
+    KeyBundleID = {{ .Values.ocr2.keyBundleId | quote }}
+    CaptureEATelemetry = {{ .Values.ocr2.captureEATelemetry }}
+
+    [P2P]
+    PeerID = {{ .Values.p2p.peerId | quote }}
+    TraceLogging = {{ .Values.p2p.traceLogging }}
+
+    [P2P.V2]
+    Enabled = {{ .Values.p2p.v2.enabled }}
+    {{- if .Values.p2p.v2.announceAddresses }}
+    AnnounceAddresses = [{{ join "," .Values.p2p.v2.announceAddresses | quote }}]
+    {{- else }}
+    AnnounceAddresses = ["{{ include "chainlink-ocr.loadBalancerIP" . }}:{{ .Values.service.p2p.port }}"]
+    {{- end }}
+    {{- $listenAddresses := toJson .Values.p2p.v2.listenAddresses }}
+    ListenAddresses = {{ join "," $listenAddresses }}
+    {{- $defaultBootstrappers := toJson .Values.p2p.v2.defaultBootstrappers }}
+    DefaultBootstrappers = {{ join "," $defaultBootstrappers }}
+
+    [[EVM]]
+    ChainID = {{ .Values.evm.chainId | quote }}
+    FinalityDepth = {{ .Values.evm.finalityDepth }}
+    MinIncomingConfirmations = {{ .Values.evm.minIncomingConfirmations }}
+    MinContractPayment = {{ .Values.evm.minContractPayment | quote }}
+
+    [EVM.GasEstimator]
+    LimitDefault = {{ .Values.evm.gasEstimator.limitDefault }}
+    BumpMin = {{ .Values.evm.gasEstimator.bumpMin | quote }}
+    BumpThreshold = {{ .Values.evm.gasEstimator.bumpThreshold }}
+
+    [EVM.HeadTracker]
+    HistoryDepth = {{ .Values.evm.headTracker.historyDepth }}
+    MaxBufferSize = {{ .Values.evm.headTracker.maxBufferSize }}
+
+    [EVM.Transactions]
+    ForwardersEnabled = {{ .Values.evm.transactions.forwardsEnabled }}
+
+    [EVM.Transactions.TransactionManagerV2]
+    Enabled = {{ .Values.evm.transactions.transactionManagerV2.enabled }}
+    BlockTime = {{ .Values.evm.transactions.transactionManagerV2.blockTime | quote }}
+    CustomURL = {{ .Values.evm.transactions.transactionManagerV2.customURL | quote }}
+    DualBroadcast = {{ .Values.evm.transactions.transactionManagerV2.dualBroadcast }}
+
+    [EVM.Transactions.AutoPurge]
+    Enabled = {{ .Values.evm.transactions.autoPurge.enabled }}
+    Threshold = {{ .Values.evm.transactions.autoPurge.threshold }}
+    MinAttempts = {{ .Values.evm.transactions.autoPurge.minAttempts }}
+    DetectionApiUrl = {{ .Values.evm.transactions.autoPurge.detectionApiUrl | quote }}
+
+    {{ range .Values.evm.nodes }}
+    [[EVM.Nodes]]
+    Name = {{ .name | quote }}
+    WSURL = {{ .wsurl | quote }}
+    HTTPURL = {{ .httpUrl | quote }}
+    {{- end }}
+
+    [Database]
+    DefaultIdleInTxSessionTimeout = '1h' # Default
+    DefaultLockTimeout = '15s' # Default
+    DefaultQueryTimeout = '10s' # Default
+    LogQueries = {{ .Values.database.logQueries }}
+    MaxIdleConns = 10 # Default
+    MaxOpenConns = 100 # Default
+    MigrateOnStartup = true # Default
+
+    {{- if .Values.telemetry.enabled }}
+
+    [TelemetryIngress]
+    BufferSize = {{ .Values.telemetry.bufferSize }}
+    UniConn = false
+    Logging = {{ .Values.telemetry.logging }}
+
+    [[TelemetryIngress.Endpoints]]
+    Network = {{ .Values.telemetry.network | quote }}
+    ChainID = {{ .Values.telemetry.chainId | quote }}
+    URL = {{ .Values.telemetry.url | quote }}
+    ServerPubKey = {{ .Values.telemetry.serverPubKey | quote }}
+
+    [Telemetry]
+    Enabled = {{ .Values.telemetry.enabled }}
+    Endpoint = 'localhost:4317'
+    InsecureConnection = true
+    TraceSampleRatio = 0.01
+    EmitterExportTimeout = '30s'
+
+    [Telemetry.ResourceAttributes]
+    node_id = "{{ .Values.telemetry.nodeId }}"
+
+    {{- end }}
+  otel-config.yaml: |
+    receivers:
+      otlp:
+        protocols:
+          grpc:
+            endpoint: "0.0.0.0:4317"
+            include_metadata: true
+
+    exporters:
+      otlphttp:
+        endpoint: {{ .Values.otelCollector.config.exporters.httpEndpoint }}
+        tls:
+          insecure: false
+        auth:
+          authenticator: "headers_setter"
+
+    processors:
+      batch:
+        send_batch_size: 512
+        timeout: "5s"
+        metadata_keys:
+          - "X-Beholder-Node-Auth-Token"
+
+    extensions:
+      health_check:
+        endpoint: "0.0.0.0:13133"
+        path: "/health/status"
+      headers_setter:
+        headers:
+          - action: "insert"
+            key: "X-Beholder-Node-Auth-Token"
+            from_context: "X-Beholder-Node-Auth-Token"
+
+    service:
+      extensions:
+        - "health_check"
+        - "headers_setter"
+
+      pipelines:
+        traces:
+          receivers:
+            - "otlp"
+          processors:
+            - "batch"
+          exporters:
+            - "otlphttp"
+
+        metrics:
+          receivers:
+            - "otlp"
+          processors:
+            - "batch"
+          exporters:
+            - "otlphttp"
+
+        logs:
+          receivers:
+            - "otlp"
+          processors:
+            - "batch"
+          exporters:
+            - "otlphttp"
+
+      telemetry:
+        metrics:
+          level: "detailed"

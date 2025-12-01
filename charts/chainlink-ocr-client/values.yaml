@@ -1,0 +1,404 @@
+# Copyright 2025 Deutsche Telekom MMS
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# yamllint disable rule:line-length
+---
+## @section Global parameters
+## @param global.readinessProbe.enabled Enable global readiness probe
+## @param global.readinessProbe.initialDelaySeconds Initial delay for global readiness probe
+## @param global.readinessProbe.periodSeconds Period for global readiness probe
+## @param global.livenessProbe.enabled Enable global liveness probe
+## @param global.livenessProbe.initialDelaySeconds Initial delay for global liveness probe
+## @param global.livenessProbe.periodSeconds Period for global liveness probe
+## @param global.startupProbe.enabled Enable global startup probe
+## @param global.startupProbe.initialDelaySeconds Initial delay for global startup probe
+## @param global.startupProbe.periodSeconds Period for global startup probe
+## @param global.startupProbe.failureThreshold Failure threshold for global startup probe
+global:
+  readinessProbe:
+    enabled: true
+    initialDelaySeconds: 1
+    periodSeconds: 5
+  livenessProbe:
+    enabled: true
+    initialDelaySeconds: 1
+    periodSeconds: 5
+  startupProbe:
+    enabled: true
+    initialDelaySeconds: 15
+    periodSeconds: 5
+    failureThreshold: 20
+
+###################################################################################################
+##                                                                                               ##
+## Chainlink TOML Configuration Parameters                                                       ##
+## Full documentation: https://github.com/smartcontractkit/chainlink/blob/v2.30.1/docs/CONFIG.md ##
+##                                                                                               ##
+###################################################################################################
+
+## @section Chainlink Feature parameters
+## @param feature.feedsManager Enable Chainlink feeds manager
+## @param feature.logPoller Enable Chainlink log poller
+feature:
+  feedsManager: true
+  logPoller: true
+
+## @section Chainlink Log parameters
+## @param log.level Log level (debug, info, warn, error)
+## @param log.jsonConsole Enable JSON console logging
+log:
+  level: "info"
+  jsonConsole: false
+
+## @section Chainlink Web Server parameters
+## @param webServer.secureCookies Enable secure cookies
+## @param webServer.allowOrigins CORS allowed origins
+## @param webServer.tls.httpsPort HTTPS port for the web server
+## @param webServer.bridgeCacheTTL Bridge cache TTL duration
+webServer:
+  secureCookies: false
+  allowOrigins: "*"
+  tls:
+    httpsPort: 6689
+  bridgeCacheTTL: ""
+
+## @section Chainlink OCR parameters
+## @param ocr.enabled Enable OCR (Off-Chain Reporting)
+## @param ocr.keyBundleId OCR key bundle identifier
+## @param ocr.transmitterAddress OCR transmitter address
+## @param ocr.credentials.api.user OCR API username
+## @param ocr.credentials.api.password OCR API password
+ocr:
+  enabled: false
+  keyBundleId: ""
+  transmitterAddress: ""
+  credentials:
+    api:
+      user: ""
+      password: ""
+
+## @section Chainlink OCR2 parameters
+## @param ocr2.enabled Enable OCR2 (Off-Chain Reporting v2)
+## @param ocr2.keyBundleId OCR2 key bundle identifier
+## @param ocr2.captureEATelemetry Enable EA telemetry capture for OCR2
+ocr2:
+  enabled: false
+  keyBundleId: ""
+  captureEATelemetry: false
+
+## @section Chainlink P2P parameters
+## @param p2p.peerId P2P peer identifier
+## @param p2p.traceLogging Enable P2P trace logging
+## @param p2p.v2.enabled Enable P2P v2
+## @param p2p.v2.announceAddresses [array] P2P v2 announce addresses with port from service.p2p.port
+## @param p2p.v2.listenAddresses [array] P2P v2 listen addresses with port from service.p2p.port
+## @param p2p.v2.defaultBootstrappers [array] Default bootstrap nodes for P2P v2
+p2p:
+  peerId: ""
+  traceLogging: false
+  v2:
+    enabled: true
+    ## Example:
+    ## announceAddresses:
+    ##   - "1.2.3.4:7990"
+    ##   - "5.6.7.8:7990"
+    announceAddresses: []
+    ## Example:
+    ## listenAddresses:
+    ##   - "0.0.0.0:7990"
+    listenAddresses:
+      - "0.0.0.0:7990"
+    defaultBootstrappers: []
+
+## @section Chainlink EVM parameters
+## @param evm.chainId EVM chain ID
+## @param evm.finalityDepth Number of blocks to wait for finality
+## @param evm.minIncomingConfirmations Minimum incoming confirmations required
+## @param evm.minContractPayment Minimum contract payment amount
+## @param evm.gasEstimator.limitDefault Default gas limit for transactions
+## @param evm.gasEstimator.bumpMin Minimum gas price bump
+## @param evm.gasEstimator.bumpThreshold Gas price bump threshold in blocks
+## @param evm.headTracker.historyDepth Number of blocks to track in history
+## @param evm.headTracker.maxBufferSize Maximum buffer size for head tracker
+## @param evm.transactions.forwardsEnabled Enable transaction forwarding
+## @param evm.transactions.transactionManagerV2.enabled Enable transaction manager v2
+## @param evm.transactions.transactionManagerV2.blockTime Expected block time
+## @param evm.transactions.transactionManagerV2.customURL Custom RPC URL for transaction manager
+## @param evm.transactions.transactionManagerV2.dualBroadcast Enable dual broadcast
+## @param evm.transactions.autoPurge.enabled Enable automatic transaction purge
+## @param evm.transactions.autoPurge.threshold Purge threshold value
+## @param evm.transactions.autoPurge.minAttempts Minimum attempts before purge
+## @param evm.transactions.autoPurge.detectionApiUrl Detection API URL for transaction purge
+## @param evm.nodes [array] Array of EVM node objects with name, wsurl, and httpUrl properties
+evm:
+  chainId: 1
+  finalityDepth: 50
+  minIncomingConfirmations: 3
+  minContractPayment: "0.1 link"
+  gasEstimator:
+    limitDefault: 500_000
+    bumpMin: "5 gwei"
+    bumpThreshold: 6
+  headTracker:
+    historyDepth: 100
+    maxBufferSize: 3
+  transactions:
+    forwardsEnabled: true
+    transactionManagerV2:
+      enabled: true
+      blockTime: "11s"
+      customURL: "https://rpc.flashbots.net/fast"
+      dualBroadcast: true
+    autoPurge:
+      enabled: true
+      threshold: 5
+      minAttempts: 10000
+      detectionApiUrl: "https://protect.flashbots.net/tx/"
+  ## Example:
+  ## nodes:
+  ##   - name: "node1"
+  ##     wsurl: "wss://example.com/ws"
+  ##     httpUrl: "https://example.com/http"
+  ##   - name: "node2"
+  ##     wsurl: "wss://example2.com/ws"
+  ##     httpUrl: "https://example2.com/http"
+  nodes: []
+
+## @section Chainlink Database parameters
+## @param database.logQueries Enable database query logging
+database:
+  logQueries: false
+
+## @section PostgreSQL parameters
+## @param postgres.host PostgreSQL database host
+## @param postgres.port PostgreSQL database port
+## @param postgres.user PostgreSQL database user
+## @param postgres.password PostgreSQL database password
+## @param postgres.database PostgreSQL database name
+## @param postgres.sslmode PostgreSQL SSL mode (disable, require, verify-ca, verify-full)
+postgres:
+  host: ""
+  port: 5432
+  user: "postgres"
+  password: ""
+  database: "chainlink"
+  sslmode: "disable"
+
+####################################################################################################
+##                                                                                                ##
+## Chainlink Secrets Configuration                                                                ##
+## Full documentation: https://github.com/smartcontractkit/chainlink/blob/v2.30.1/docs/SECRETS.md ##
+##                                                                                                ##
+####################################################################################################
+
+## @section Keystore parameters
+## @param keystorePassword Base64 encoded keystore passphrase
+keystorePassword: ""
+
+## @section Telemetry parameters
+## @param telemetry.enabled Enable telemetry reporting to Chainlink
+## @param telemetry.url OTI telemetry URL
+## @param telemetry.serverPubKey OTI server public key
+## @param telemetry.logging Enable telemetry logging
+## @param telemetry.bufferSize Telemetry buffer size
+## @param telemetry.network Network identifier for telemetry
+## @param telemetry.chainId Chain ID for telemetry
+## @param telemetry.nodeId Node identifier for OTEL collector
+telemetry:
+  enabled: false
+  url: ""
+  serverPubKey: ""
+  logging: false
+  bufferSize: 100
+  network: "EVM"
+  chainId: "1"
+  nodeId: ""
+
+## @section Development parameters
+## @param chainlinkDev Enable development mode (allows webhook jobs creation, set to "false" for production)
+chainlinkDev: "false"
+
+## @section Deployment parameters
+## @param replicaCount Number of Chainlink replicas to deploy
+replicaCount: 1
+
+## @section Image parameters
+## @param image.registry The Docker registry for the Chainlink image
+## @param image.repository The Docker repository for the Chainlink image
+## @param image.pullPolicy The image pull policy
+## @param image.tag The Docker image tag
+image:
+  registry: "docker.io"
+  repository: "smartcontract/chainlink"
+  pullPolicy: "IfNotPresent"
+  tag: "2.30.1"
+
+## @section OTEL Collector parameters
+## @param otelCollector.image.registry The Docker registry for the OTEL Collector image
+## @param otelCollector.image.repository The Docker repository for the OTEL Collector image
+## @param otelCollector.image.pullPolicy The OTEL Collector image pull policy
+## @param otelCollector.image.tag The OTEL Collector Docker image tag
+## @param otelCollector.resources.requests.cpu CPU resource requests for OTEL Collector
+## @param otelCollector.resources.requests.memory Memory resource requests for OTEL Collector
+## @param otelCollector.resources.limits.cpu CPU resource limits for OTEL Collector
+## @param otelCollector.resources.limits.memory Memory resource limits for OTEL Collector
+## @param otelCollector.securityContext.readOnlyRootFilesystem Set OTEL Collector root filesystem to read-only
+## @param otelCollector.securityContext.runAsNonRoot Run OTEL Collector as non-root user
+## @param otelCollector.securityContext.runAsUser User ID to run the OTEL Collector container
+## @param otelCollector.securityContext.runAsGroup Group ID to run the OTEL Collector container
+## @param otelCollector.securityContext.fsGroup Filesystem group ID for OTEL Collector
+## @param otelCollector.config.exporters.httpEndpoint HTTP endpoint for OTEL Collector exporters
+otelCollector:
+  image:
+    registry: "docker.io"
+    repository: "otel/opentelemetry-collector-contrib"
+    pullPolicy: "IfNotPresent"
+    tag: "0.140.1"
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "128Mi"
+    limits:
+      cpu: "100m"
+      memory: "128Mi"
+  securityContext:
+    readOnlyRootFilesystem: true
+    runAsNonRoot: true
+    runAsUser: 10001
+    runAsGroup: 10001
+    fsGroup: 10001
+  config:
+    exporters:
+      httpEndpoint: "https://prod.telemetry.chain.link:443"
+
+## @section Image pull secrets
+## @param imagePullSecrets The secrets for pulling images from a private registry
+imagePullSecrets: []
+
+## @section Name override parameters
+## @param nameOverride String to partially override chainlink.fullname
+## @param fullnameOverride String to fully override chainlink.fullname
+nameOverride: ""
+fullnameOverride: ""
+
+## @section Service parameters
+## @param service.web.name Name for the web service port
+## @param service.web.type Kubernetes service type for web interface
+## @param service.web.port Service port for web interface
+## @param service.p2p.name Name for the p2p service port
+## @param service.p2p.type Kubernetes service type for p2p interface
+## @param service.p2p.port Service port for P2P communication
+## @param service.p2p.nodePort Service port for P2P communication
+service:
+  web:
+    name: "web-port"
+    type: "ClusterIP"
+    port: 6688
+  p2p:
+    name: "p2p-v2-tcp"
+    type: "LoadBalancer"
+    port: 7990
+    ## @param service.p2p.port The port for p2p communication
+    ## Note: This port needs to be added to every ip-address in p2p.v2.announceAddresses and p2p.v2.listenAddresses
+    ##
+    nodePort: 30001
+
+## @section Pod Security Context parameters
+## @param podSecurityContext Pod security context configuration
+podSecurityContext: {}
+
+## @section Security Context parameters
+## @param securityContext.readOnlyRootFilesystem Set the root filesystem to read-only
+## @param securityContext.runAsNonRoot Run container as non-root user
+## @param securityContext.runAsUser User ID to run the container
+securityContext:
+  readOnlyRootFilesystem: false
+  runAsNonRoot: true
+  runAsUser: 14933
+
+## @section Resource parameters
+## @param resources.requests.cpu CPU resource requests
+## @param resources.requests.memory Memory resource requests
+## @param resources.limits.cpu CPU resource limits
+## @param resources.limits.memory Memory resource limits
+resources:
+  requests:
+    cpu: "350m"
+    memory: "1024Mi"
+  limits:
+    cpu: "350m"
+    memory: "1024Mi"
+
+## @section Metrics parameters
+## @param metrics.enabled Enable Prometheus metrics
+## @param metrics.serviceMonitor.enabled Enable Prometheus Service Monitor
+## @param metrics.serviceMonitor.interval Scrape interval for Service Monitor
+## @param metrics.prometheusRule.enabled Enable Prometheus rules
+## @param metrics.prometheusRule.rules [array] Prometheus rule definitions
+metrics:
+  enabled: "false"
+  serviceMonitor:
+    enabled: "false"
+    interval: "30s"
+  prometheusRule:
+    enabled: "false"
+    rules: []
+
+## @section Ingress parameters
+## @param ingress.enabled Enable ingress controller resource
+## @param ingress.className Ingress class name
+## @param ingress.annotations Annotations for the Ingress resource
+## @param ingress.hosts [array] Hosts configuration for the Ingress resource
+## @param ingress.tls [array] TLS configuration for the Ingress resource
+ingress:
+  enabled: "false"
+  className: "nginx"
+  ## Example:
+  ## annotations:
+  ##    cert-manager.io/cluster-issuer: ""
+  ##    nginx.ingress.kubernetes.io/auth-url: ""
+  ##    nginx.ingress.kubernetes.io/auth-signin: ""
+  annotations: {}
+  ## Example:
+  ## hosts:
+  ##   - host: "chainlink.example.com"
+  hosts:
+    - host: ""
+  ## Example:
+  ## tls:
+  ##   - secretName: "chainlink-tls"
+  ##     hosts:
+  ##       - "chainlink.example.com"
+  tls:
+    - secretName: ""
+      hosts:
+        - ""
+
+## @section Pod Annotations parameters
+## @param podAnnotations Annotations to add to the pod
+podAnnotations: {}
+
+## @section Node selector parameters
+## @param nodeSelector Node labels for pod assignment
+nodeSelector: {}
+
+## @section Tolerations parameters
+## @param tolerations Tolerations for pod assignment
+tolerations: []
+
+## @section Affinity parameters
+## @param affinity Affinity for pod assignment
+affinity: {}
+...
+# yamllint enable rule:line-length
