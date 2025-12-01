@@ -1,0 +1,160 @@
+# Copyright 2025 Deutsche Telekom MMS
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+apiVersion: "apps/v1"
+kind: "Deployment"
+metadata:
+  name: {{ include "chainlink-ocr.fullname" . }}
+  labels:
+    {{- include "chainlink-ocr.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "chainlink-ocr.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "chainlink-ocr.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: "otel-collector"
+        {{- with .Values.otelCollector.securityContext }}
+          securityContext:
+            {{ toYaml . | nindent 12 | trim }}
+        {{- end }}
+          image: "{{ .Values.otelCollector.image.registry }}/{{ .Values.otelCollector.image.repository }}:{{ .Values.otelCollector.image.tag }}"
+          imagePullPolicy: {{ .Values.otelCollector.image.pullPolicy }}
+          args:
+            - "--config"
+            - "/etc/config-volume/otel-config.yaml"
+          volumeMounts:
+            - name: "config-volume"
+              mountPath: "/etc/config-volume/{{ include "otel-collector.configFileName" . }}"
+              subPath: "{{ include "otel-collector.configFileName" . }}"
+              readOnly: true
+          {{- with .Values.otelCollector.resources }}
+          resources:
+            {{ toYaml . | nindent 12 | trim }}
+          {{- end }}
+        - name: {{ include "chainlink-ocr.fullname" . }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          args:
+            - "node"
+            - "-c"
+            - "/etc/config-volume/config.toml"
+            - "-s"
+            - "/etc/secrets-volume/secrets.toml"
+            - "start"
+            - "-d"
+            - "-a"
+            - "/etc/node-secrets-volume/apiCredentials"
+          volumeMounts:
+            - name: "api-credentials-volume"
+              mountPath: "/etc/node-secrets-volume/apiCredentials"
+              subPath: "apiCredentials"
+              readOnly: true
+            - name: "config-volume"
+              mountPath: "/etc/config-volume/config.toml"
+              subPath: "config.toml"
+              readOnly: true
+            - name: "secrets-volume"
+              mountPath: "/etc/secrets-volume/secrets.toml"
+              subPath: "secrets.toml"
+              readOnly: true
+          ports:
+            - name: {{ .Values.service.web.name }}
+              containerPort: {{ .Values.service.web.port }}
+              protocol: "TCP"
+            - name: {{ .Values.service.p2p.name }}
+              containerPort: {{ .Values.service.p2p.port }}
+              protocol: "TCP"
+        {{- if .Values.global.livenessProbe.enabled }}
+          livenessProbe:
+            httpGet:
+              path: "/health"
+              port: "web"
+            initialDelaySeconds: {{ .Values.global.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.global.livenessProbe.periodSeconds }}
+        {{- end }}
+        {{- if .Values.global.readinessProbe.enabled }}
+          readinessProbe:
+            httpGet:
+              path: "/health"
+              port: "web"
+            initialDelaySeconds: {{ .Values.global.readinessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.global.readinessProbe.periodSeconds }}
+        {{- end }}
+        {{- if .Values.global.startupProbe.enabled }}
+          startupProbe:
+            httpGet:
+              path: "/"
+              port: "web"
+            initialDelaySeconds: {{ .Values.global.startupProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.global.startupProbe.periodSeconds }}
+            failureThreshold: {{ .Values.global.startupProbe.failureThreshold }}
+        {{- end }}
+          env:
+            - name: "CL_DEV"
+              value: "{{ .Values.chainlinkDev }}"
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      volumes:
+        - name: "api-credentials-volume"
+          secret:
+            secretName: "{{ include "chainlink-ocr.fullname" . }}-secret"
+            items:
+            - key: "apiCredentials"
+              path: "apiCredentials"
+        - name: "secrets-volume"
+          secret:
+            secretName: "{{ include "chainlink-ocr.fullname" . }}-toml-secrets"
+            items:
+            - key: "secrets.toml"
+              path: "secrets.toml"
+        - name: "config-volume"
+          configMap:
+            name: "{{ include "chainlink-ocr.fullname" . }}"
+            items:
+            - key: "config.toml"
+              path: "config.toml"
+            - key: "{{ include "otel-collector.configFileName" . }}"
+              path: "{{ include "otel-collector.configFileName" . }}"
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+  strategy:
+    type: Recreate
