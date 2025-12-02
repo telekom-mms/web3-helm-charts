@@ -54,6 +54,8 @@ helm install chainlink-ocr-client web3-helm-charts/chainlink-ocr-client
 helmfile apply -f ./helmfile.yaml
 ```
 
+-<!-- markdownlint-disable MD013 -->
+
 ## Parameters
 
 ### Environment parameters

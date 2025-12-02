@@ -10,6 +10,7 @@ releases:
     namespace: "chainlink"
     values:
       - "./values.yaml"
+      # yamllint disable rule:braces
       - postgres.password: {{ requiredEnv "PG_PASSWORD" }}
       - ocr.credentials.api.password: {{ requiredEnv "API_PASSWORD" }}
       - keystorePassword: {{ requiredEnv "KEYSTORE_PASSWORD" }}

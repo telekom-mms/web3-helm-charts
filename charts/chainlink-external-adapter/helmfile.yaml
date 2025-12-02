@@ -10,6 +10,7 @@ releases:
     namespace: "chainlink"
     values:
       - "./awesome-adapter-values.yaml"
+      # yamllint disable rule:braces
       - env.AWESOME_ENV_VARIABLE: "awesome"
       - secrets.API_KEY: {{ requiredEnv "API_KEY" }}
 ...
