@@ -1,0 +1,132 @@
+# Copyright 2025 Deutsche Telekom MMS
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# yamllint disable rule:line-length
+---
+####################################################################################################
+##                                                                                                ##
+## Chainlink External Adapter Configuration                                                       ##
+## Documentation: https://github.com/smartcontractkit/external-adapters-js                        ##
+##                                                                                                ##
+####################################################################################################
+
+## @section Environment parameters
+## @param env.LOG_LEVEL Log level for the external adapter (debug, info, warn, error)
+env:
+  LOG_LEVEL: "debug"
+
+## @section Cache parameters
+## @param cache.enabled Enable caching for the external adapter
+## @param cache.cacheKeyGroup Cache key group for Redis cache, set to the name of the respective bridge
+## @param cache.cacheType Type of cache to use (redis, local)
+## @param cache.cacheRedisHost Redis host for caching
+## @param cache.cacheMaxAge Maximum cache age in milliseconds
+## @param cache.cacheKeyIgnoredProps Properties to ignore in cache key generation
+cache:
+  enabled: "true"
+  cacheKeyGroup: ""
+  cacheType: "redis"
+  cacheRedisHost: ""
+  cacheMaxAge: "60000"
+  cacheKeyIgnoredProps: "meta"
+
+## @section Secrets parameters
+## @param secrets Secret values such as private keys, API keys, etc. provided as environment variables
+## Example:
+## secrets:
+##   API_KEY: "your-api-key"
+##   PRIVATE_KEY: "your-private-key"
+secrets: {}
+
+## @section Deployment parameters
+## @param replicaCount Number of External Adapter replicas to deploy
+replicaCount: 1
+
+## @section Image parameters
+## @param image.registry The Docker registry for the External Adapter image
+## @param image.repository The Docker repository for the External Adapter image
+## @param image.pullPolicy The image pull policy
+## @param image.tag The Docker image tag
+image:
+  registry: ""
+  repository: ""
+  pullPolicy: "IfNotPresent"
+  tag: ""
+
+## @section Image pull secrets
+## @param imagePullSecrets The secrets for pulling images from a private registry
+## Example:
+## imagePullSecrets:
+##   - name: "my-registry-secret"
+imagePullSecrets: []
+
+## @section Name override parameters
+## @param nameOverride String to partially override external-adapter.fullname
+## @param fullnameOverride String to fully override external-adapter.fullname
+nameOverride: ""
+fullnameOverride: ""
+
+## @section Pod Annotations parameters
+## @param podAnnotations Annotations to add to the pod
+podAnnotations: {}
+
+## @section Pod Security Context parameters
+## @param podSecurityContext Pod security context configuration
+## Example:
+## podSecurityContext:
+##   fsGroup: 2000
+podSecurityContext: {}
+
+## @section Security Context parameters
+## @param securityContext.readOnlyRootFilesystem Set the root filesystem to read-only
+## @param securityContext.runAsNonRoot Run container as non-root user
+## @param securityContext.runAsUser User ID to run the container
+securityContext:
+  readOnlyRootFilesystem: false
+  runAsNonRoot: true
+  runAsUser: 1000
+
+## @section Service parameters
+## @param service.type Kubernetes service type
+## @param service.port Service port for the External Adapter HTTP endpoint
+service:
+  type: "ClusterIP"
+  port: 80
+
+## @section Resource parameters
+## @param resources.requests.cpu CPU resource requests
+## @param resources.requests.memory Memory resource requests
+## @param resources.limits.cpu CPU resource limits
+## @param resources.limits.memory Memory resource limits
+resources:
+  requests:
+    cpu: "50m"
+    memory: "64Mi"
+  limits:
+    cpu: "200m"
+    memory: "256Mi"
+
+## @section Node selector parameters
+## @param nodeSelector Node labels for pod assignment
+nodeSelector: {}
+
+## @section Tolerations parameters
+## @param tolerations Tolerations for pod assignment
+tolerations: []
+
+## @section Affinity parameters
+## @param affinity Affinity for pod assignment
+affinity: {}
+...
+# yamllint enable rule:line-length

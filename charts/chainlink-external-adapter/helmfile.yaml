@@ -1,0 +1,15 @@
+---
+repositories:
+  - name: "chainlink-external-adapter"
+    url: "https://telekom-mms.github.io/web3-helm-charts"
+
+releases:
+  - name: "awesome-adapter"
+    chart: "chainlink-external-adapter/chainlink-external-adapter"
+    version: "1.0.0"
+    namespace: "chainlink"
+    values:
+      - "./awesome-adapter-values.yaml"
+      - env.AWESOME_ENV_VARIABLE: "awesome"
+      - secrets.API_KEY: {{ requiredEnv "API_KEY" }}
+...
