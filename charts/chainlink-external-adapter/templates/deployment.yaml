@@ -1,0 +1,92 @@
+# Copyright 2025 Deutsche Telekom MMS
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+---
+apiVersion: {{ include "common.capabilities.deployment.apiVersion" . }}
+kind: "Deployment"
+metadata:
+  name: {{ include "chainlink-bridge.fullname" . }}
+  labels:
+    {{- include "chainlink-bridge.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "chainlink-bridge.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "chainlink-bridge.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: "http"
+              containerPort: 8080
+              protocol: "TCP"
+          livenessProbe:
+            httpGet:
+              path: "/health"
+              port: "http"
+          readinessProbe:
+            httpGet:
+              path: "/health"
+              port: "http"
+          envFrom:
+            - secretRef:
+                name: {{ include "chainlink-bridge.fullname" . }}-secret
+            - configMapRef:
+                name: {{ include "chainlink-bridge.fullname" . }}-env
+          {{ if .Values.cache.enabled }}
+          env:
+            - name: "CACHE_KEY_GROUP"
+              value: {{ .Values.cache.cacheKeyGroup }}
+            - name: "CACHE_TYPE"
+              value: {{ .Values.cache.cacheType }}
+            - name: "CACHE_REDIS_HOST"
+              value: {{ .Values.cache.cacheRedisHost }}
+            - name: "CACHE_MAX_AGE"
+              value: {{ .Values.cache.cacheMaxAge | quote }}
+            - name: "CACHE_KEY_IGNORED_PROPS"
+              value: {{ .Values.cache.cacheKeyIgnoredProps }}
+          {{ end }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+...
