@@ -111,14 +111,14 @@ helmfile apply -f ./helmfile.yaml
 
 ### Chainlink P2P parameters
 
-| Name                          | Description                                               | Value   |
-| ----------------------------- | --------------------------------------------------------- | ------- |
-| `p2p.peerId`                  | P2P peer identifier                                       | `""`    |
-| `p2p.traceLogging`            | Enable P2P trace logging                                  | `false` |
-| `p2p.v2.enabled`              | Enable P2P v2                                             | `true`  |
-| `p2p.v2.announceAddresses`    | P2P v2 announce addresses with port from service.p2p.port | `[]`    |
-| `p2p.v2.listenAddresses`      | P2P v2 listen addresses with port from service.p2p.port   | `[]`    |
-| `p2p.v2.defaultBootstrappers` | Default bootstrap nodes for P2P v2                        | `[]`    |
+| Name                          | Description                                                                | Value   |
+| ----------------------------- | -------------------------------------------------------------------------- | ------- |
+| `p2p.peerId`                  | P2P peer identifier                                                        | `""`    |
+| `p2p.traceLogging`            | Enable P2P trace logging                                                   | `false` |
+| `p2p.v2.enabled`              | Enable P2P v2                                                              | `true`  |
+| `p2p.v2.announceAddresses`    | P2P v2 announce addresses - REQUIRED when service.p2p.type is LoadBalancer | `[]`    |
+| `p2p.v2.listenAddresses`      | P2P v2 listen addresses with port from service.p2p.port                    | `[]`    |
+| `p2p.v2.defaultBootstrappers` | Default bootstrap nodes for P2P v2                                         | `[]`    |
 
 ### Chainlink EVM parameters
 
@@ -235,15 +235,17 @@ helmfile apply -f ./helmfile.yaml
 
 ### Service parameters
 
-| Name                   | Description                               | Value          |
-| ---------------------- | ----------------------------------------- | -------------- |
-| `service.web.name`     | Name for the web service port             | `web-port`     |
-| `service.web.type`     | Kubernetes service type for web interface | `ClusterIP`    |
-| `service.web.port`     | Service port for web interface            | `6688`         |
-| `service.p2p.name`     | Name for the p2p service port             | `p2p-v2-tcp`   |
-| `service.p2p.type`     | Kubernetes service type for p2p interface | `LoadBalancer` |
-| `service.p2p.port`     | Service port for P2P communication        | `7990`         |
-| `service.p2p.nodePort` | Service port for P2P communication        | `30001`        |
+| Name                      | Description                               | Value          |
+| ------------------------- | ----------------------------------------- | -------------- |
+| `service.web.name`        | Name for the web service port             | `web-port`     |
+| `service.web.type`        | Kubernetes service type for web interface | `ClusterIP`    |
+| `service.web.port`        | Service port for web interface            | `6688`         |
+| `service.p2p.name`        | Name for the p2p service port             | `p2p-v2-tcp`   |
+| `service.p2p.type`        | Kubernetes service type for p2p interface | `LoadBalancer` |
+| `service.p2p.port`        | Service port for P2P communication        | `7990`         |
+| `service.p2p.nodePort`    | Service port for P2P communication        | `30001`        |
+| `service.p2p.annotations` | Annotations for the P2P service           | `{}`           |
+| `service.p2p.port`        | The port for p2p communication            | `7990`         |
 
 ### Pod Security Context parameters
 

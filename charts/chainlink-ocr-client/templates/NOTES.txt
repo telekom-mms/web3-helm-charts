@@ -1,0 +1,74 @@
+{{- if eq .Values.service.p2p.type "LoadBalancer" }}
+{{- if not .Values.p2p.v2.announceAddresses }}
+
+================================================================================
+⚠️  CONFIGURATION REQUIRED: LoadBalancer IP Setup
+================================================================================
+
+The chainlink-ocr-client has been installed with a LoadBalancer service,
+but the P2P announce address is not yet configured.
+
+NEXT STEPS:
+
+1. Wait for the LoadBalancer to receive an external IP or hostname:
+
+   kubectl get svc {{ include "chainlink-ocr.fullname" . }}-p2p-service \
+     -n {{ .Release.Namespace }} --watch
+
+   Wait until EXTERNAL-IP shows an address (not <pending>).
+
+2. Once assigned, retrieve the external address:
+
+   kubectl get svc {{ include "chainlink-ocr.fullname" . }}-p2p-service \
+     -n {{ .Release.Namespace }} \
+     -o jsonpath='{.status.loadBalancer.ingress[0]}'
+
+   Note: The output may contain either "ip" or "hostname" field.
+
+3. Update the chart configuration:
+
+   helm upgrade {{ .Release.Name }} chainlink-ocr-client \
+     --reuse-values \
+     --set p2p.v2.announceAddresses[0]="<EXTERNAL_ADDRESS>:{{ .Values.service.p2p.port }}"
+
+   Replace <EXTERNAL_ADDRESS> with the IP or hostname from step 2.
+
+4. Verify the configuration:
+
+   kubectl get configmap {{ include "chainlink-ocr.fullname" . }} \
+     -n {{ .Release.Namespace }} \
+     -o jsonpath='{.data.config\.toml}' | grep AnnounceAddresses
+
+The pods will automatically restart with the updated configuration.
+
+================================================================================
+{{- else }}
+
+Chainlink OCR Client has been installed successfully!
+
+✓ P2P announce address configured: {{ index .Values.p2p.v2.announceAddresses 0 }}
+
+To verify the deployment:
+
+  kubectl get pods -n {{ .Release.Namespace }} -l app.kubernetes.io/name={{ include "chainlink-ocr.name" . }}
+
+To view logs:
+
+  kubectl logs -n {{ .Release.Namespace }} -l app.kubernetes.io/name={{ include "chainlink-ocr.name" . }} -f
+
+{{- end }}
+{{- else }}
+
+Chainlink OCR Client has been installed successfully!
+
+Service type: {{ .Values.service.p2p.type }}
+
+To verify the deployment:
+
+  kubectl get pods -n {{ .Release.Namespace }} -l app.kubernetes.io/name={{ include "chainlink-ocr.name" . }}
+
+To view logs:
+
+  kubectl logs -n {{ .Release.Namespace }} -l app.kubernetes.io/name={{ include "chainlink-ocr.name" . }} -f
+
+{{- end }}
