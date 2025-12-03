@@ -313,6 +313,7 @@ service:
     ## Note: This port needs to be added to every ip-address in p2p.v2.announceAddresses and p2p.v2.listenAddresses
     ##
     nodePort: 30001
+    annotations: {}
 
 ## @section Pod Security Context parameters
 ## @param podSecurityContext Pod security context configuration
