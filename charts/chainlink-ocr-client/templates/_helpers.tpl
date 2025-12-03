@@ -65,16 +65,6 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
-Lookup loadbalancer ip for p2p service.
-*/}}
-{{- define "chainlink-ocr.loadBalancerIP" -}}
-{{- $service := lookup "v1" "Service" "chainlink" "p2p-service" }}
-{{- if $service }}
-{{ (index $service.status.loadBalancer.ingress 0).ip | toString }}
-{{- end }}
-{{- end }}
-
-{{/*
 Define config file name for otel collector.
 */}}
 {{- define "otel-collector.configFileName" -}}

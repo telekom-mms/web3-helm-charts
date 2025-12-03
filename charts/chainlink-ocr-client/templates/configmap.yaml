@@ -54,11 +54,7 @@ data:
 
     [P2P.V2]
     Enabled = {{ .Values.p2p.v2.enabled }}
-    {{- if .Values.p2p.v2.announceAddresses }}
-    AnnounceAddresses = [{{ join "," .Values.p2p.v2.announceAddresses | quote }}]
-    {{- else }}
-    AnnounceAddresses = ["{{ include "chainlink-ocr.loadBalancerIP" . }}:{{ .Values.service.p2p.port }}"]
-    {{- end }}
+    AnnounceAddresses = [{{ range $i, $addr := .Values.p2p.v2.announceAddresses }}{{if $i}}, {{end}}{{ $addr | quote }}{{end}}]
     {{- $listenAddresses := toJson .Values.p2p.v2.listenAddresses }}
     ListenAddresses = {{ join "," $listenAddresses }}
     {{- $defaultBootstrappers := toJson .Values.p2p.v2.defaultBootstrappers }}

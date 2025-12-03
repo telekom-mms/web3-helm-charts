@@ -101,7 +101,7 @@ ocr2:
 ## @param p2p.peerId P2P peer identifier
 ## @param p2p.traceLogging Enable P2P trace logging
 ## @param p2p.v2.enabled Enable P2P v2
-## @param p2p.v2.announceAddresses [array] P2P v2 announce addresses with port from service.p2p.port
+## @param p2p.v2.announceAddresses [array] P2P v2 announce addresses - REQUIRED when service.p2p.type is LoadBalancer
 ## @param p2p.v2.listenAddresses [array] P2P v2 listen addresses with port from service.p2p.port
 ## @param p2p.v2.defaultBootstrappers [array] Default bootstrap nodes for P2P v2
 p2p:
@@ -109,10 +109,32 @@ p2p:
   traceLogging: false
   v2:
     enabled: true
-    ## Example:
+    ## REQUIRED when service.p2p.type is "LoadBalancer"
+    ##
+    ## List of addresses where this node's P2P service can be reached by other nodes.
+    ## Format: ["IP_OR_HOSTNAME:PORT"]
+    ##
+    ## For LoadBalancer services:
+    ## 1. Install the chart (it will fail with a validation error if this is empty)
+    ## 2. Wait for LoadBalancer IP assignment:
+    ##    kubectl get svc <p2p-service-name> --watch
+    ## 3. Retrieve the external IP or hostname from the LoadBalancer service
+    ## 4. Upgrade the release with the address:
+    ##    helm upgrade <release-name> chainlink-ocr-client --reuse-values \
+    ##      --set p2p.v2.announceAddresses[0]="<EXTERNAL_IP_OR_HOSTNAME>:7990"
+    ##
+    ## For NodePort services:
+    ## Use the external node IP and the NodePort value
+    ## Example: ["203.0.113.45:30001"]
+    ##
+    ## For ClusterIP services (internal only):
+    ## Use the cluster-internal service DNS name
+    ## Example: ["chainlink-ocr-client-p2p-service.default.svc.cluster.local:7990"]
+    ##
+    ## Multiple addresses can be specified for multi-homed configurations:
     ## announceAddresses:
-    ##   - "1.2.3.4:7990"
-    ##   - "5.6.7.8:7990"
+    ##   - "203.0.113.10:7990"
+    ##   - "example.com:7990"
     announceAddresses: []
     ## Example:
     ## listenAddresses:
@@ -300,6 +322,7 @@ fullnameOverride: ""
 ## @param service.p2p.type Kubernetes service type for p2p interface
 ## @param service.p2p.port Service port for P2P communication
 ## @param service.p2p.nodePort Service port for P2P communication
+## @param service.p2p.annotations Annotations for the P2P service
 service:
   web:
     name: "web-port"
