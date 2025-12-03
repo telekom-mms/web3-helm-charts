@@ -34,6 +34,10 @@ metadata:
   name: {{ include "chainlink-ocr.fullname" . }}-p2p-service
   labels:
     {{- include "chainlink-ocr.labels" . | nindent 4 }}
+  {{- with .Values.service.p2p.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 spec:
   type: {{ .Values.service.p2p.type }}
   selector:
