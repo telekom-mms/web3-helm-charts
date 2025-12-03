@@ -3,6 +3,16 @@ entries:
   chainlink-ocr-client:
   - apiVersion: v2
     appVersion: 2.30.1
+    created: "2025-12-03T15:26:27.192990659Z"
+    description: A Helm chart for Chainlink OCR
+    digest: 27724298fdb2395ebab674758f5e53ac698031956520ca762db2706084ba915d
+    name: chainlink-ocr-client
+    type: application
+    urls:
+    - https://github.com/telekom-mms/web3-helm-charts/releases/download/chainlink-ocr-client-1.0.2/chainlink-ocr-client-1.0.2.tgz
+    version: 1.0.2
+  - apiVersion: v2
+    appVersion: 2.30.1
     created: "2025-12-02T13:30:19.543423143Z"
     description: A Helm chart for Chainlink OCR
     digest: 497ad88d88b183825855dc3e454e078b71cf955b7bd34b9e5c42993d5adf63fe
@@ -137,4 +147,4 @@ entries:
     urls:
     - https://github.com/telekom-mms/web3-helm-charts/releases/download/layer-zero-0.0.0/layer-zero-0.0.0.tgz
     version: 0.0.0
-generated: "2025-12-02T13:30:20.183011025Z"
+generated: "2025-12-03T15:26:27.193011628Z"
