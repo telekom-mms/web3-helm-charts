@@ -27,7 +27,7 @@ spec:
     - name: {{ .Values.service.web.name }}
       port: {{ .Values.service.web.port }}
       targetPort: {{ .Values.service.web.name }}
-...
+---
 apiVersion: "v1"
 kind: "Service"
 metadata:
