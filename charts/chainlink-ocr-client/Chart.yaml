@@ -17,6 +17,6 @@ apiVersion: "v2"
 name: "chainlink-ocr-client"
 description: "A Helm chart for Chainlink OCR"
 type: "application"
-version: "1.0.2"
+version: "1.0.3"
 appVersion: "2.30.1"
 ...

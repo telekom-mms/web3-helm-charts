@@ -44,9 +44,80 @@ The pods will automatically restart with the updated configuration.
 ================================================================================
 {{- else }}
 
+{{- $serviceName := printf "%s-p2p-service" (include "chainlink-ocr.fullname" .) }}
+{{- $service := lookup "v1" "Service" .Release.Namespace $serviceName }}
+{{- $lbAddress := "" }}
+{{- $lbIsIP := false }}
+{{- $expectedPort := .Values.service.p2p.port | toString }}
+
+{{- if and $service $service.status $service.status.loadBalancer $service.status.loadBalancer.ingress }}
+  {{- $ingress := index $service.status.loadBalancer.ingress 0 }}
+  {{- if $ingress.ip }}
+    {{- $lbAddress = $ingress.ip }}
+    {{- $lbIsIP = true }}
+  {{- else if $ingress.hostname }}
+    {{- $lbAddress = $ingress.hostname }}
+    {{- $lbIsIP = false }}
+  {{- end }}
+{{- end }}
+
+{{- $matched := false }}
+{{- $matchedAddress := "" }}
+{{- range .Values.p2p.v2.announceAddresses }}
+  {{- $parts := splitList ":" . }}
+  {{- if eq (len $parts) 2 }}
+    {{- $addr := index $parts 0 }}
+    {{- $port := index $parts 1 }}
+    {{- if and (eq $addr $lbAddress) (eq $port $expectedPort) }}
+      {{- $matched = true }}
+      {{- $matchedAddress = . }}
+    {{- end }}
+  {{- end }}
+{{- end }}
+
 Chainlink OCR Client has been installed successfully!
 
 ✓ P2P announce address configured: {{ index .Values.p2p.v2.announceAddresses 0 }}
+
+{{- if $lbAddress }}
+
+LoadBalancer Validation:
+{{- if $matched }}
+  ✓ Announce address matches LoadBalancer configuration
+    LoadBalancer: {{ $lbAddress }}:{{ $expectedPort }}
+    Configured: {{ $matchedAddress }}
+{{- else }}
+{{- if $lbIsIP }}
+  ✗ WARNING: Announce address does not match LoadBalancer configuration
+
+    LoadBalancer Address: {{ $lbAddress }}:{{ $expectedPort }}
+    Configured Addresses: {{ join ", " .Values.p2p.v2.announceAddresses }}
+
+    To fix this configuration, run:
+
+    helm upgrade {{ .Release.Name }} chainlink-ocr-client \
+      --reuse-values \
+      --set p2p.v2.announceAddresses[0]="{{ $lbAddress }}:{{ $expectedPort }}"
+{{- else }}
+  ℹ️  LoadBalancer uses hostname instead of IP address
+    LoadBalancer: {{ $lbAddress }}:{{ $expectedPort }}
+    Configured: {{ index .Values.p2p.v2.announceAddresses 0 }}
+
+    Please verify DNS resolution matches your configuration.
+{{- end }}
+{{- end }}
+{{- else }}
+  ⚠️  LoadBalancer address not yet assigned
+
+    The LoadBalancer service exists but hasn't received an external address yet.
+    Run the following command to check status:
+
+    kubectl get svc {{ $serviceName }} -n {{ .Release.Namespace }} --watch
+
+    Once assigned, verify the configuration by running:
+
+    helm upgrade {{ .Release.Name }} {{ .Chart.Name }} --reuse-values
+{{- end }}
 
 To verify the deployment:
 
