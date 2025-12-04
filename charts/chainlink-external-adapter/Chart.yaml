@@ -14,7 +14,7 @@
 
 ---
 apiVersion: "v2"
-name: "external-adapter"
+name: "chainlink-external-adapter"
 description: "A Helm chart for Chainlink external adapters"
 type: "application"
 version: "1.0.0"
