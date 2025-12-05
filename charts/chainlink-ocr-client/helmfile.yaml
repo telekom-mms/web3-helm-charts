@@ -6,7 +6,7 @@ repositories:
 releases:
   - name: "chainlink-ocr-client"
     chart: "chainlink-ocr-client/chainlink-ocr-client"
-    version: "1.0.0"
+    version: "1.0.2"
     namespace: "chainlink"
     values:
       - "./values.yaml"
