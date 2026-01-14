@@ -264,7 +264,7 @@ image:
   registry: "docker.io"
   repository: "smartcontract/chainlink"
   pullPolicy: "IfNotPresent"
-  tag: "2.30.1"
+  tag: "2.32.0"
 
 ## @section OTEL Collector parameters
 ## @param otelCollector.image.registry The Docker registry for the OTEL Collector image
