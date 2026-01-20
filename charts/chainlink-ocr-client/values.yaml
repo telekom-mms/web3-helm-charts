@@ -286,7 +286,7 @@ otelCollector:
     registry: "docker.io"
     repository: "otel/opentelemetry-collector-contrib"
     pullPolicy: "IfNotPresent"
-    tag: "0.140.1"
+    tag: "0.144.0"
   resources:
     requests:
       cpu: "100m"
