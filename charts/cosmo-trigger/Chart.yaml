@@ -11,5 +11,5 @@ dependencies:
     repository: "oci://registry-1.docker.io/bitnamicharts"
     tags:
       - "bitnami-common"
-    version: "2.37.0"
+    version: "2.40.0"
 ...
