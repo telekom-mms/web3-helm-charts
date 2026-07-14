@@ -8,7 +8,7 @@
 image:
   registry: "us-east1-docker.pkg.dev/lz-docker"
   repository: "gasolina/gasolina"
-  tag: "1.1.55"
+  tag: "1.2.2"
   pullPolicy: "IfNotPresent"
 
 ## @section Deployment parameters
@@ -195,15 +195,48 @@ layerZeroEnvironment: "testnet"
 ## @param layerZeroSupportedULNVersions `LAYERZERO_SUPPORTED_ULN_VERSIONS` List of supported ULN versions to be used by the client
 layerZeroSupportedULNVersions:
   - "V2"
-## @param availableChainsAndRPCEndpoints List of available chains and their corresponding RPC endpoints
-## `LAYERZERO_AVAILABLE_CHAIN_NAMES` List of available chains and their corresponding RPC endpoints
+## @param providers.entities [array] Registry of allowed provider entity names referenced by chain endpoints
+## @param providers.chains [object] Per-chain RPC endpoints in providers-v2 format: chains.{chain}.{endpoint}[] = { uri, category, entity, headers? }
+## `LAYERZERO_AVAILABLE_CHAIN_NAMES` is derived from the keys of providers.chains
 ## e.g.:
-## availableChainsAndRPCEndpoints:
-##   ethereum:
-##     uris:
-##       - "https://<ETHEREUM_RPC_ENDPOINT>"
-##     quorum: 1
-availableChainsAndRPCEndpoints: {}
+## providers:
+##   entities: ["ankr", "publicnode", "CHAIN_OPERATOR"]
+##   chains:
+##     ethereum:
+##       rpc:
+##         - uri: "https://ethereum-rpc.publicnode.com"
+##           category: "shared_external"
+##           entity: "publicnode"
+providers:
+  entities: []
+  chains: {}
+## @param quorumStrategy.default [object] Default quorum policy applied to every chain/endpoint unless overridden
+## @param quorumStrategy.chains [object] Optional per-chain / per-endpoint quorum overrides
+## `allOf` entries are AND-ed, `oneOf` OR-ed; each maps a category (or `any`) to a min count of distinct entities.
+## Production guidance: use `any: 2`+ (quorum 1 lets a single compromised RPC forge source-chain data).
+## `restrictions.minimumMaxEntities` (optional) floors the `any: "max"` sentinel, which demands unanimity
+## among an endpoint's distinct entities and rejects the config if fewer than that many exist.
+## e.g.:
+## quorumStrategy:
+##   restrictions:
+##     minimumMaxEntities: 2
+##   default:
+##     allOf:
+##       - any: 2
+##   chains:
+##     ethereum:
+##       rpc:
+##         allOf:
+##           - any: 5
+##     bsc:
+##       rpc:
+##         allOf:
+##           - any: "max"
+quorumStrategy:
+  default:
+    allOf:
+      - any: 1
+  chains: {}
 ## @param walletMnemonicMapping `LAYERZERO_WALLET_MNEMONIC_MAPPING_FILE_PATH` JSON string for wallet mnemonic mapping
 walletMnemonicMapping: ""
 ## @param wallets `LAYERZERO_WALLETS_FILE_PATH` JSON string for wallets

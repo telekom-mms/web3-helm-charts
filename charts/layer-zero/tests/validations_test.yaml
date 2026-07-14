@@ -16,10 +16,10 @@ tests:
     asserts:
       - failedTemplate:
           errorMessage: "If metrics.serviceMonitor.enabled is true, metrics.enabled must be true!"
-  - it: "Should fail to render if availableChainsAndRPCEndpoints is empty"
+  - it: "Should fail to render if providers.chains is empty"
     asserts:
       - failedTemplate:
-          errorMessage: "availableChainsAndRPCEndpoints must not be empty!"
+          errorMessage: "providers.chains must not be empty!"
   - it: "Should fail to render if service.type is LoadBalancer, but service.annotations.kubernetes.io/elb.autocreate is not set"
   - it: "Should fail to render if wallets is not set"
     asserts:
