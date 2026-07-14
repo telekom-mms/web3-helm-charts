@@ -87,7 +87,7 @@ spec:
             - name: LAYERZERO_SUPPORTED_ULN_VERSIONS
               value: {{ .Values.layerZeroSupportedULNVersions | toJson | quote }}
             - name: LAYERZERO_AVAILABLE_CHAIN_NAMES
-              value: {{ .Values.availableChainsAndRPCEndpoints | keys | join "," | quote }}
+              value: {{ .Values.providers.chains | keys | join "," | quote }}
             - name: LAYERZERO_ENVIRONMENT
               value: {{ .Values.layerZeroEnvironment | quote }}
             - name: LAYERZERO_WALLETS_FILE_PATH
@@ -96,6 +96,8 @@ spec:
               value: "{{ include "layer-zero.secretVolumePath" . }}/walletMnemonicMapping.json"
             - name: LAYERZERO_PROVIDER_CONFIG_FILE_PATH
               value: "{{ include "layer-zero.configVolumePath" . }}/providers.json"
+            - name: LAYERZERO_QUORUM_STRATEGY_CONFIG_FILE_PATH
+              value: "{{ include "layer-zero.configVolumePath" . }}/quorum-strategy.json"
           ports:
             - name: "{{ include "layer-zero.serverPortName" . }}"
               containerPort: {{ .Values.service.port }}
@@ -146,6 +148,8 @@ spec:
             items:
               - key: "providers.json"
                 path: "providers.json"
+              - key: "quorum-strategy.json"
+                path: "quorum-strategy.json"
               - key: "wallets.json"
                 path: "wallets.json"
 ...

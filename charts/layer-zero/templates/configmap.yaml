@@ -7,7 +7,9 @@ metadata:
     {{- include "common.labels.standard" . | nindent 4 }}
 data:
   providers.json: |
-    {{ .Values.availableChainsAndRPCEndpoints | toPrettyJson | nindent 4 }}
+    {{ .Values.providers | toPrettyJson | nindent 4 }}
+  quorum-strategy.json: |
+    {{ .Values.quorumStrategy | toPrettyJson | nindent 4 }}
   wallets.json: |
     {{ .Values.wallets | nindent 4 }}
 ...
