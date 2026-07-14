@@ -408,13 +408,16 @@ the `layer-zero-chart` and their default values.
 
 ### Custom layer-zero configuration
 
-| Name                             | Description                                                                                | Value     |
-| -------------------------------- | ------------------------------------------------------------------------------------------ | --------- |
-| `layerZeroEnvironment`           | `LAYERZERO_ENVIRONMENT` Environment e.g. mainnet, testnet, etc.                            | `testnet` |
-| `layerZeroSupportedULNVersions`  | `LAYERZERO_SUPPORTED_ULN_VERSIONS` List of supported ULN versions to be used by the client | `["V2"]`  |
-| `availableChainsAndRPCEndpoints` | List of available chains and their corresponding RPC endpoints                             | `{}`      |
-| `walletMnemonicMapping`          | `LAYERZERO_WALLET_MNEMONIC_MAPPING_FILE_PATH` JSON string for wallet mnemonic mapping      | `""`      |
-| `wallets`                        | `LAYERZERO_WALLETS_FILE_PATH` JSON string for wallets                                      | `""`      |
+| Name                            | Description                                                                                                        | Value                   |
+| ------------------------------- | ----------------------------------------------------------------------------------------------------------------- | ----------------------- |
+| `layerZeroEnvironment`          | `LAYERZERO_ENVIRONMENT` Environment e.g. mainnet, testnet, etc.                                                    | `testnet`               |
+| `layerZeroSupportedULNVersions` | `LAYERZERO_SUPPORTED_ULN_VERSIONS` List of supported ULN versions to be used by the client                        | `["V2"]`                |
+| `providers.entities`            | Registry of allowed provider entity names referenced by chain endpoints                                           | `[]`                    |
+| `providers.chains`              | Per-chain RPC endpoints in providers-v2 format: chains.{chain}.{endpoint}[] = { uri, category, entity, headers? } | `{}`                    |
+| `quorumStrategy.default`        | Default quorum policy applied to every chain/endpoint unless overridden                                           | `{"allOf":[{"any":1}]}` |
+| `quorumStrategy.chains`         | Optional per-chain / per-endpoint quorum overrides                                                                | `{}`                    |
+| `walletMnemonicMapping`         | `LAYERZERO_WALLET_MNEMONIC_MAPPING_FILE_PATH` JSON string for wallet mnemonic mapping                             | `""`                    |
+| `wallets`                       | `LAYERZERO_WALLETS_FILE_PATH` JSON string for wallets                                                             | `""`                    |
 
 ## Unit Tests
 
