@@ -63,6 +63,8 @@ spec:
               mountPath: "{{ include "layer-zero.secretVolumePath" . }}/"
             - name: {{ include "layer-zero.configVolumeName" . }}
               mountPath: "{{ include "layer-zero.configVolumePath" . }}/"
+            - name: "tmp"
+              mountPath: "/tmp"
         {{- if .Values.diagnosticMode.enabled }}
           command: ["sleep"]
           args: ["infinity"]
@@ -70,7 +72,7 @@ spec:
           args:
             - "/bin/bash"
             - "-c"
-            - "NODE_OPTIONS=--max-old-space-size=$MAX_OLD_SPACE_SIZE apps/gasolina/node_modules/.bin/ts-node-transpile-only apps/gasolina/src/index.ts"
+            - "NODE_OPTIONS=--max-old-space-size=$MAX_OLD_SPACE_SIZE migrated/offchain-monorepo/apps/gasolina/node_modules/.bin/tsx migrated/offchain-monorepo/apps/gasolina/src/index.ts"
           {{- range .Values.extraArgs }}
             {{ . }}
           {{- end }}
@@ -152,4 +154,6 @@ spec:
                 path: "quorum-strategy.json"
               - key: "wallets.json"
                 path: "wallets.json"
+        - name: "tmp"
+          emptyDir: {}
 ...
