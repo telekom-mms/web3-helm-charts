@@ -78,6 +78,22 @@ entries:
     version: 1.0.0
   layer-zero:
   - apiVersion: v2
+    appVersion: 1.2.2
+    created: "2026-07-15T08:26:20.312210664Z"
+    dependencies:
+    - name: common
+      repository: oci://registry-1.docker.io/bitnamicharts
+      tags:
+      - bitnami-common
+      version: 2.40.0
+    description: Helm Chart for LayerZero
+    digest: 7b81e437a323a09d0df683d667ff97b5ffc177437fe6993a2f48c360c5ac3c7b
+    name: layer-zero
+    type: application
+    urls:
+    - https://github.com/telekom-mms/web3-helm-charts/releases/download/layer-zero-2.0.0/layer-zero-2.0.0.tgz
+    version: 2.0.0
+  - apiVersion: v2
     appVersion: 1.1.15
     created: "2025-03-17T15:41:06.414716695Z"
     dependencies:
@@ -157,4 +173,4 @@ entries:
     urls:
     - https://github.com/telekom-mms/web3-helm-charts/releases/download/layer-zero-0.0.0/layer-zero-0.0.0.tgz
     version: 0.0.0
-generated: "2025-12-05T14:16:32.453000874Z"
+generated: "2026-07-15T08:26:20.312239748Z"
