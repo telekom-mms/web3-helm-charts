@@ -200,6 +200,41 @@ This command is equivalent to the previous one, but the values are
 specified directly in the command without setting them
 as environment variables.
 
+## Signing with KMS
+
+By default Gasolina signs with the mnemonics from `walletMnemonicMapping`
+(`signer.type=LOCAL_MNEMONIC`).
+With `signer.type=KMS` it signs with a key held in a cloud KMS instead.
+The chart then renders no mnemonic Secret and no `wallets.json`,
+so `wallets` and `walletMnemonicMapping` are not needed.
+
+```yaml
+signer:
+  type: "KMS"
+  kms:
+    cloudType: "AWS"
+    keyId: "<KMS_KEY_ID_OR_ARN>"
+    region: "<AWS_REGION>"
+extraEnv:
+  - name: "AWS_ACCESS_KEY_ID"
+    valueFrom:
+      secretKeyRef:
+        name: "<SECRET_NAME>"
+        key: "AWS_ACCESS_KEY_ID"
+  - name: "AWS_SECRET_ACCESS_KEY"
+    valueFrom:
+      secretKeyRef:
+        name: "<SECRET_NAME>"
+        key: "AWS_SECRET_ACCESS_KEY"
+```
+
+Gasolina gets AWS credentials from the default AWS SDK credential chain,
+so any mechanism that chain supports works, set through `extraEnv`.
+Every listed KMS key must sign each request,
+so set exactly one key per instance.
+For `cloudType: "GCP"`, also set `GCP_PROJECT_ID` and `GCP_KEY_RING_ID`
+through `extraEnv`.
+
 ## Testing the node
 
 This example applies specifically to Arbitrum and Solana.
@@ -264,7 +299,7 @@ the `layer-zero-chart` and their default values.
 | ------------------ | ----------------------------------- | ----------------------------------- |
 | `image.registry`   | The Docker registry for the image   | `us-east1-docker.pkg.dev/lz-docker` |
 | `image.repository` | The Docker repository for the image | `gasolina/gasolina`                 |
-| `image.tag`        | The Docker image tag                | `1.1.17`                            |
+| `image.tag`        | The Docker image tag                | `1.2.2`                             |
 | `image.pullPolicy` | The image pull policy               | `IfNotPresent`                      |
 
 ### Deployment parameters
@@ -391,6 +426,7 @@ the `layer-zero-chart` and their default values.
 | ------------- | ------------------------------------------------------ | ----- |
 | `extraLabels` | Additional labels to add to the Statefulset/Deployment | `{}`  |
 | `extraArgs`   | Extra arguments to pass to the container arguments     | `[]`  |
+| `extraEnv`    | Extra environment variables for the gasolina container | `[]`  |
 
 ### Priority parameters
 
@@ -408,16 +444,20 @@ the `layer-zero-chart` and their default values.
 
 ### Custom layer-zero configuration
 
-| Name                            | Description                                                                                                        | Value                   |
-| ------------------------------- | ----------------------------------------------------------------------------------------------------------------- | ----------------------- |
-| `layerZeroEnvironment`          | `LAYERZERO_ENVIRONMENT` Environment e.g. mainnet, testnet, etc.                                                    | `testnet`               |
-| `layerZeroSupportedULNVersions` | `LAYERZERO_SUPPORTED_ULN_VERSIONS` List of supported ULN versions to be used by the client                        | `["V2"]`                |
-| `providers.entities`            | Registry of allowed provider entity names referenced by chain endpoints                                           | `[]`                    |
-| `providers.chains`              | Per-chain RPC endpoints in providers-v2 format: chains.{chain}.{endpoint}[] = { uri, category, entity, headers? } | `{}`                    |
-| `quorumStrategy.default`        | Default quorum policy applied to every chain/endpoint unless overridden                                           | `{"allOf":[{"any":1}]}` |
-| `quorumStrategy.chains`         | Optional per-chain / per-endpoint quorum overrides                                                                | `{}`                    |
-| `walletMnemonicMapping`         | `LAYERZERO_WALLET_MNEMONIC_MAPPING_FILE_PATH` JSON string for wallet mnemonic mapping                             | `""`                    |
-| `wallets`                       | `LAYERZERO_WALLETS_FILE_PATH` JSON string for wallets                                                             | `""`                    |
+| Name                            | Description                                                                                                                       | Value                   |
+| ------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- | ----------------------- |
+| `layerZeroEnvironment`          | `LAYERZERO_ENVIRONMENT` Environment e.g. mainnet, testnet, etc.                                                                   | `testnet`               |
+| `layerZeroSupportedULNVersions` | `LAYERZERO_SUPPORTED_ULN_VERSIONS` List of supported ULN versions to be used by the client                                        | `["V2"]`                |
+| `providers.entities`            | Registry of allowed provider entity names referenced by chain endpoints                                                           | `[]`                    |
+| `providers.chains`              | Per-chain RPC endpoints in providers-v2 format: chains.{chain}.{endpoint}[] = { uri, category, entity, headers? }                 | `{}`                    |
+| `quorumStrategy.default`        | Default quorum policy applied to every chain/endpoint unless overridden                                                           | `{"allOf":[{"any":1}]}` |
+| `quorumStrategy.chains`         | Optional per-chain / per-endpoint quorum overrides                                                                                | `{}`                    |
+| `signer.type`                   | `SIGNER_TYPE` LOCAL_MNEMONIC or KMS                                                                                               | `LOCAL_MNEMONIC`        |
+| `signer.kms.cloudType`          | `KMS_CLOUD_TYPE` AWS or GCP                                                                                                       | `AWS`                   |
+| `signer.kms.keyId`              | `LAYERZERO_KMS_IDS` KMS key ID or ARN, one per instance                                                                           | `""`                    |
+| `signer.kms.region`             | `LAYERZERO_CDK_DEPLOY_REGION` region of the key                                                                                   | `""`                    |
+| `walletMnemonicMapping`         | `LAYERZERO_WALLET_MNEMONIC_MAPPING_FILE_PATH` JSON string for wallet mnemonic mapping, only used if signer.type is LOCAL_MNEMONIC | `""`                    |
+| `wallets`                       | `LAYERZERO_WALLETS_FILE_PATH` JSON string for wallets, only used if signer.type is LOCAL_MNEMONIC                                 | `""`                    |
 
 ## Unit Tests
 
