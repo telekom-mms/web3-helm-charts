@@ -6,9 +6,9 @@
 ## @param image.tag The Docker image tag
 ## @param image.pullPolicy The image pull policy
 image:
-  registry: "us-east1-docker.pkg.dev/lz-docker"
+  registry: "us-east1-docker.pkg.dev/gasolina-docker"
   repository: "gasolina/gasolina"
-  tag: "1.2.2"
+  tag: "1.2.93"
   pullPolicy: "IfNotPresent"
 
 ## @section Deployment parameters

@@ -295,12 +295,12 @@ the `layer-zero-chart` and their default values.
 
 ### Image parameters
 
-| Name               | Description                         | Value                               |
-| ------------------ | ----------------------------------- | ----------------------------------- |
-| `image.registry`   | The Docker registry for the image   | `us-east1-docker.pkg.dev/lz-docker` |
-| `image.repository` | The Docker repository for the image | `gasolina/gasolina`                 |
-| `image.tag`        | The Docker image tag                | `1.2.2`                             |
-| `image.pullPolicy` | The image pull policy               | `IfNotPresent`                      |
+| Name               | Description                         | Value                                     |
+| ------------------ | ----------------------------------- | ----------------------------------------- |
+| `image.registry`   | The Docker registry for the image   | `us-east1-docker.pkg.dev/gasolina-docker` |
+| `image.repository` | The Docker repository for the image | `gasolina/gasolina`                       |
+| `image.tag`        | The Docker image tag                | `1.2.93`                                  |
+| `image.pullPolicy` | The image pull policy               | `IfNotPresent`                            |
 
 ### Deployment parameters
 

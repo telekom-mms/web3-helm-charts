@@ -4,8 +4,8 @@ name: "layer-zero"
 description: "Helm Chart for LayerZero"
 type: "application"
 version: "2.1.0"
-# renovate: image=us-east1-docker.pkg.dev/lz-docker/gasolina/gasolina
-appVersion: "1.2.2"
+# renovate: image=us-east1-docker.pkg.dev/gasolina-docker/gasolina/gasolina
+appVersion: "1.2.93"
 dependencies:
   - name: "common"
     repository: "oci://registry-1.docker.io/bitnamicharts"
