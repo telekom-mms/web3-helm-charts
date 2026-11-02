@@ -59,8 +59,10 @@ spec:
             {{ toYaml . | nindent 12 | trim }}
         {{- end }}
           volumeMounts:
+          {{- if eq .Values.signer.type "LOCAL_MNEMONIC" }}
             - name: {{ include "layer-zero.secretVolumeName" . }}
               mountPath: "{{ include "layer-zero.secretVolumePath" . }}/"
+          {{- end }}
             - name: {{ include "layer-zero.configVolumeName" . }}
               mountPath: "{{ include "layer-zero.configVolumePath" . }}/"
             - name: "tmp"
@@ -85,21 +87,33 @@ spec:
             - name: PROVIDER_CONFIG_TYPE
               value: "LOCAL"
             - name: SIGNER_TYPE
-              value: "LOCAL_MNEMONIC"
+              value: {{ .Values.signer.type | quote }}
             - name: LAYERZERO_SUPPORTED_ULN_VERSIONS
               value: {{ .Values.layerZeroSupportedULNVersions | toJson | quote }}
             - name: LAYERZERO_AVAILABLE_CHAIN_NAMES
               value: {{ .Values.providers.chains | keys | join "," | quote }}
             - name: LAYERZERO_ENVIRONMENT
               value: {{ .Values.layerZeroEnvironment | quote }}
+          {{- if eq .Values.signer.type "KMS" }}
+            - name: KMS_CLOUD_TYPE
+              value: {{ .Values.signer.kms.cloudType | quote }}
+            - name: LAYERZERO_KMS_IDS
+              value: {{ .Values.signer.kms.keyId | quote }}
+            - name: LAYERZERO_CDK_DEPLOY_REGION
+              value: {{ .Values.signer.kms.region | quote }}
+          {{- else }}
             - name: LAYERZERO_WALLETS_FILE_PATH
               value: "{{ include "layer-zero.configVolumePath" . }}/wallets.json"
             - name: LAYERZERO_WALLET_MNEMONIC_MAPPING_FILE_PATH
               value: "{{ include "layer-zero.secretVolumePath" . }}/walletMnemonicMapping.json"
+          {{- end }}
             - name: LAYERZERO_PROVIDER_CONFIG_FILE_PATH
               value: "{{ include "layer-zero.configVolumePath" . }}/providers.json"
             - name: LAYERZERO_QUORUM_STRATEGY_CONFIG_FILE_PATH
               value: "{{ include "layer-zero.configVolumePath" . }}/quorum-strategy.json"
+          {{- with .Values.extraEnv }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           ports:
             - name: "{{ include "layer-zero.serverPortName" . }}"
               containerPort: {{ .Values.service.port }}
@@ -138,12 +152,14 @@ spec:
               port: {{ .Values.service.port }}
         {{- end }}
       volumes:
+      {{- if eq .Values.signer.type "LOCAL_MNEMONIC" }}
         - name: {{ include "layer-zero.secretVolumeName" . }}
           secret:
             secretName: "{{ include "common.names.fullname" . }}"
             items:
               - key: "walletMnemonicMapping.json"
                 path: "walletMnemonicMapping.json"
+      {{- end }}
         - name: "{{ include "layer-zero.configVolumeName" . }}"
           configMap:
             name: "{{ include "common.names.fullname" . }}"
@@ -152,8 +168,10 @@ spec:
                 path: "providers.json"
               - key: "quorum-strategy.json"
                 path: "quorum-strategy.json"
+              {{- if eq .Values.signer.type "LOCAL_MNEMONIC" }}
               - key: "wallets.json"
                 path: "wallets.json"
+              {{- end }}
         - name: "tmp"
           emptyDir: {}
 ...

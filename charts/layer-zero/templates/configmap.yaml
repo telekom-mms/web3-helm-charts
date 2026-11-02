@@ -10,6 +10,8 @@ data:
     {{ .Values.providers | toPrettyJson | nindent 4 }}
   quorum-strategy.json: |
     {{ .Values.quorumStrategy | toPrettyJson | nindent 4 }}
+  {{- if eq .Values.signer.type "LOCAL_MNEMONIC" }}
   wallets.json: |
     {{ .Values.wallets | nindent 4 }}
+  {{- end }}
 ...
