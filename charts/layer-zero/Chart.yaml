@@ -3,7 +3,7 @@ apiVersion: "v2"
 name: "layer-zero"
 description: "Helm Chart for LayerZero"
 type: "application"
-version: "2.1.0"
+version: "2.2.0"
 # renovate: image=us-east1-docker.pkg.dev/gasolina-docker/gasolina/gasolina
 appVersion: "1.2.93"
 dependencies:

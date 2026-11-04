@@ -67,6 +67,9 @@ spec:
               mountPath: "{{ include "layer-zero.configVolumePath" . }}/"
             - name: "tmp"
               mountPath: "/tmp"
+          {{- with .Values.extraVolumeMounts }}
+            {{- include "common.tplvalues.render" (dict "value" . "context" $) | nindent 12 }}
+          {{- end }}
         {{- if .Values.diagnosticMode.enabled }}
           command: ["sleep"]
           args: ["infinity"]
@@ -151,6 +154,9 @@ spec:
             httpGet:
               port: {{ .Values.service.port }}
         {{- end }}
+      {{- with .Values.sidecars }}
+        {{- include "common.tplvalues.render" (dict "value" . "context" $) | nindent 8 }}
+      {{- end }}
       volumes:
       {{- if eq .Values.signer.type "LOCAL_MNEMONIC" }}
         - name: {{ include "layer-zero.secretVolumeName" . }}
@@ -174,4 +180,7 @@ spec:
               {{- end }}
         - name: "tmp"
           emptyDir: {}
+      {{- with .Values.extraVolumes }}
+        {{- include "common.tplvalues.render" (dict "value" . "context" $) | nindent 8 }}
+      {{- end }}
 ...

@@ -235,6 +235,58 @@ so set exactly one key per instance.
 For `cloudType: "GCP"`, also set `GCP_PROJECT_ID` and `GCP_KEY_RING_ID`
 through `extraEnv`.
 
+### Credentials from a sidecar
+
+Instead of static keys, a sidecar can serve short-lived credentials,
+for example the IAM Roles Anywhere `aws_signing_helper serve`
+with a client certificate.
+`sidecars`, `extraVolumes` and `extraVolumeMounts` add the container
+and its volumes to the pod.
+`extraDeploy` deploys further objects with the release,
+for example the cert-manager `Certificate` for the client certificate.
+All four are rendered as templates,
+so they can use expressions such as `{{ .Release.Namespace }}`.
+
+```yaml
+extraEnv:
+  - name: "AWS_EC2_METADATA_SERVICE_ENDPOINT"
+    value: "http://127.0.0.1:9911/"
+sidecars:
+  - name: "credential-helper"
+    image: "<CREDENTIAL_HELPER_IMAGE>"
+    args:
+      - "serve"
+      - "--certificate"
+      - "/var/run/client-cert/tls.crt"
+      - "--private-key"
+      - "/var/run/client-cert/tls.key"
+      - "--trust-anchor-arn"
+      - "<TRUST_ANCHOR_ARN>"
+      - "--profile-arn"
+      - "<PROFILE_ARN>"
+      - "--role-arn"
+      - "<ROLE_ARN>"
+    volumeMounts:
+      - name: "client-cert"
+        mountPath: "/var/run/client-cert"
+        readOnly: true
+extraVolumes:
+  - name: "client-cert"
+    secret:
+      secretName: "<CLIENT_CERT_SECRET>"
+extraDeploy:
+  - apiVersion: "cert-manager.io/v1"
+    kind: "Certificate"
+    metadata:
+      name: "<CLIENT_CERT_SECRET>"
+    spec:
+      secretName: "<CLIENT_CERT_SECRET>"
+      commonName: "<COMMON_NAME>"
+      usages: ["digital signature", "client auth"]
+      issuerRef:
+        name: "<ISSUER>"
+```
+
 ## Testing the node
 
 This example applies specifically to Arbitrum and Solana.
@@ -422,11 +474,15 @@ the `layer-zero-chart` and their default values.
 
 ### Extra parameters
 
-| Name          | Description                                            | Value |
-| ------------- | ------------------------------------------------------ | ----- |
-| `extraLabels` | Additional labels to add to the Statefulset/Deployment | `{}`  |
-| `extraArgs`   | Extra arguments to pass to the container arguments     | `[]`  |
-| `extraEnv`    | Extra environment variables for the gasolina container | `[]`  |
+| Name                | Description                                                                      | Value |
+| ------------------- | -------------------------------------------------------------------------------- | ----- |
+| `extraLabels`       | Additional labels to add to the Statefulset/Deployment                           | `{}`  |
+| `extraArgs`         | Extra arguments to pass to the container arguments                               | `[]`  |
+| `extraEnv`          | Extra environment variables for the gasolina container                           | `[]`  |
+| `extraVolumes`      | Extra volumes for the pod, rendered as a template                                | `[]`  |
+| `extraVolumeMounts` | Extra volume mounts for the gasolina container, rendered as a template           | `[]`  |
+| `sidecars`          | Extra containers for the pod, rendered as a template                             | `[]`  |
+| `extraDeploy`       | Extra Kubernetes objects to deploy with the release, each rendered as a template | `[]`  |
 
 ### Priority parameters
 

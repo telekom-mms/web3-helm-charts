@@ -177,6 +177,37 @@ diagnosticMode:
 extraLabels: {}
 extraArgs: []
 extraEnv: []
+## @param extraVolumes Extra volumes for the pod, rendered as a template
+## @param extraVolumeMounts Extra volume mounts for the gasolina container, rendered as a template
+## e.g. a client certificate for a credential helper sidecar:
+## extraVolumes:
+##   - name: "client-cert"
+##     secret:
+##       secretName: "{{ include \"common.names.fullname\" . }}-client-cert"
+## extraVolumeMounts:
+##   - name: "client-cert"
+##     mountPath: "/var/run/client-cert"
+##     readOnly: true
+extraVolumes: []
+extraVolumeMounts: []
+## @param sidecars Extra containers for the pod, rendered as a template
+## e.g. a credential helper that serves AWS credentials on localhost,
+## used by Gasolina through the extraEnv entry `AWS_EC2_METADATA_SERVICE_ENDPOINT`:
+## sidecars:
+##   - name: "credential-helper"
+##     image: "<CREDENTIAL_HELPER_IMAGE>"
+##     args: ["serve", "--port", "9911"]
+sidecars: []
+## @param extraDeploy Extra Kubernetes objects to deploy with the release, each rendered as a template
+## e.g. a cert-manager Certificate for the client certificate:
+## extraDeploy:
+##   - apiVersion: "cert-manager.io/v1"
+##     kind: "Certificate"
+##     metadata:
+##       name: "{{ include \"common.names.fullname\" . }}-client-cert"
+##     spec:
+##       secretName: "{{ include \"common.names.fullname\" . }}-client-cert"
+extraDeploy: []
 
 ## @section Priority parameters
 ## @param priorityClassName Priority class name for the pods
