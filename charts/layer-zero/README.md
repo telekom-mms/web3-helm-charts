@@ -208,6 +208,8 @@ With `signer.type=KMS` it signs with a key held in a cloud KMS instead.
 The chart then renders no mnemonic Secret and no `wallets.json`,
 so `wallets` and `walletMnemonicMapping` are not needed.
 
+![KMS signer](./img/layer-zero-kms-signer.png)
+
 ```yaml
 signer:
   type: "KMS"
