@@ -1,0 +1,96 @@
+# yamllint disable rule:line-length
+---
+suite: "Test Extra Resources"
+templates:
+  - "deployment.yaml"
+  - "extra-list.yaml"
+release:
+  name: "test-release"
+  namespace: "test-namespace"
+# The default readiness probe renders a duplicate httpGet key, which the unittest parser rejects
+set:
+  readinessProbe.enabled: false
+tests:
+  - it: "Should render no sidecars, extra volumes or extra objects by default"
+    asserts:
+      - lengthEqual:
+          path: "spec.template.spec.containers"
+          count: 1
+        template: "deployment.yaml"
+      - notContains:
+          path: "spec.template.spec.volumes"
+          content:
+            name: "client-cert"
+          any: true
+        template: "deployment.yaml"
+      - hasDocuments:
+          count: 0
+        template: "extra-list.yaml"
+  - it: "Should add sidecars, extra volumes and extra volume mounts as templates"
+    set:
+      sidecars:
+        - name: "credential-helper"
+          image: "example/helper:1.0.0"
+          args: ["serve", "--release", "{{ .Release.Name }}"]
+      extraVolumes:
+        - name: "client-cert"
+          secret:
+            secretName: "{{ .Release.Name }}-client-cert"
+      extraVolumeMounts:
+        - name: "client-cert"
+          mountPath: "/var/run/client-cert"
+          readOnly: true
+    asserts:
+      - equal:
+          path: "spec.template.spec.containers[1]"
+          value:
+            name: "credential-helper"
+            image: "example/helper:1.0.0"
+            args: ["serve", "--release", "test-release"]
+        template: "deployment.yaml"
+      - contains:
+          path: "spec.template.spec.volumes"
+          content:
+            name: "client-cert"
+            secret:
+              secretName: "test-release-client-cert"
+        template: "deployment.yaml"
+      - contains:
+          path: "spec.template.spec.containers[0].volumeMounts"
+          content:
+            name: "client-cert"
+            mountPath: "/var/run/client-cert"
+            readOnly: true
+        template: "deployment.yaml"
+  - it: "Should render extraDeploy objects as templates"
+    set:
+      extraDeploy:
+        - apiVersion: "cert-manager.io/v1"
+          kind: "Certificate"
+          metadata:
+            name: "{{ .Release.Name }}-client-cert"
+          spec:
+            secretName: "{{ .Release.Name }}-client-cert"
+        - apiVersion: "v1"
+          kind: "ServiceAccount"
+          metadata:
+            name: "cert-issuer"
+    asserts:
+      - hasDocuments:
+          count: 2
+        template: "extra-list.yaml"
+      - isKind:
+          of: "Certificate"
+        documentIndex: 0
+        template: "extra-list.yaml"
+      - equal:
+          path: "spec.secretName"
+          value: "test-release-client-cert"
+        documentIndex: 0
+        template: "extra-list.yaml"
+      - isKind:
+          of: "ServiceAccount"
+        documentIndex: 1
+        template: "extra-list.yaml"
+...
+# yamllint enable rule:line-length

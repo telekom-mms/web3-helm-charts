@@ -6,9 +6,9 @@
 ## @param image.tag The Docker image tag
 ## @param image.pullPolicy The image pull policy
 image:
-  registry: "us-east1-docker.pkg.dev/lz-docker"
+  registry: "us-east1-docker.pkg.dev/gasolina-docker"
   repository: "gasolina/gasolina"
-  tag: "1.2.2"
+  tag: "1.2.93"
   pullPolicy: "IfNotPresent"
 
 ## @section Deployment parameters
@@ -166,8 +166,48 @@ diagnosticMode:
 ## @section Extra parameters
 ## @param extraLabels Additional labels to add to the Statefulset/Deployment
 ## @param extraArgs Extra arguments to pass to the container arguments
+## @param extraEnv Extra environment variables for the gasolina container
+## e.g. AWS credentials for the KMS signer:
+## extraEnv:
+##   - name: "AWS_ACCESS_KEY_ID"
+##     valueFrom:
+##       secretKeyRef:
+##         name: "aws-credentials"
+##         key: "AWS_ACCESS_KEY_ID"
 extraLabels: {}
 extraArgs: []
+extraEnv: []
+## @param extraVolumes Extra volumes for the pod, rendered as a template
+## @param extraVolumeMounts Extra volume mounts for the gasolina container, rendered as a template
+## e.g. a client certificate for a credential helper sidecar:
+## extraVolumes:
+##   - name: "client-cert"
+##     secret:
+##       secretName: "{{ include \"common.names.fullname\" . }}-client-cert"
+## extraVolumeMounts:
+##   - name: "client-cert"
+##     mountPath: "/var/run/client-cert"
+##     readOnly: true
+extraVolumes: []
+extraVolumeMounts: []
+## @param sidecars Extra containers for the pod, rendered as a template
+## e.g. a credential helper that serves AWS credentials on localhost,
+## used by Gasolina through the extraEnv entry `AWS_EC2_METADATA_SERVICE_ENDPOINT`:
+## sidecars:
+##   - name: "credential-helper"
+##     image: "<CREDENTIAL_HELPER_IMAGE>"
+##     args: ["serve", "--port", "9911"]
+sidecars: []
+## @param extraDeploy Extra Kubernetes objects to deploy with the release, each rendered as a template
+## e.g. a cert-manager Certificate for the client certificate:
+## extraDeploy:
+##   - apiVersion: "cert-manager.io/v1"
+##     kind: "Certificate"
+##     metadata:
+##       name: "{{ include \"common.names.fullname\" . }}-client-cert"
+##     spec:
+##       secretName: "{{ include \"common.names.fullname\" . }}-client-cert"
+extraDeploy: []
 
 ## @section Priority parameters
 ## @param priorityClassName Priority class name for the pods
@@ -237,9 +277,19 @@ quorumStrategy:
     allOf:
       - any: 1
   chains: {}
-## @param walletMnemonicMapping `LAYERZERO_WALLET_MNEMONIC_MAPPING_FILE_PATH` JSON string for wallet mnemonic mapping
+## @param signer.type `SIGNER_TYPE` LOCAL_MNEMONIC or KMS
+## @param signer.kms.cloudType `KMS_CLOUD_TYPE` AWS or GCP
+## @param signer.kms.keyId `LAYERZERO_KMS_IDS` KMS key ID or ARN, one per instance
+## @param signer.kms.region `LAYERZERO_CDK_DEPLOY_REGION` region of the key
+signer:
+  type: "LOCAL_MNEMONIC"
+  kms:
+    cloudType: "AWS"
+    keyId: ""
+    region: ""
+## @param walletMnemonicMapping `LAYERZERO_WALLET_MNEMONIC_MAPPING_FILE_PATH` JSON string for wallet mnemonic mapping, only used if signer.type is LOCAL_MNEMONIC
 walletMnemonicMapping: ""
-## @param wallets `LAYERZERO_WALLETS_FILE_PATH` JSON string for wallets
+## @param wallets `LAYERZERO_WALLETS_FILE_PATH` JSON string for wallets, only used if signer.type is LOCAL_MNEMONIC
 wallets: ""
 ...
 # yamllint enable rule:line-length

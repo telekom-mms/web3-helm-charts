@@ -1,0 +1,126 @@
+# yamllint disable rule:line-length
+---
+suite: "Test Signer"
+templates:
+  - "deployment.yaml"
+  - "configmap.yaml"
+  - "secret.yaml"
+release:
+  name: "test-release"
+  namespace: "test-namespace"
+# The default readiness probe renders a duplicate httpGet key, which the unittest parser rejects
+set:
+  readinessProbe.enabled: false
+tests:
+  - it: "Should use the local mnemonic signer by default"
+    asserts:
+      - contains:
+          path: "spec.template.spec.containers[0].env"
+          content:
+            name: "SIGNER_TYPE"
+            value: "LOCAL_MNEMONIC"
+        template: "deployment.yaml"
+      - contains:
+          path: "spec.template.spec.containers[0].env"
+          content:
+            name: "LAYERZERO_WALLET_MNEMONIC_MAPPING_FILE_PATH"
+            value: "/data/secret/walletMnemonicMapping.json"
+        template: "deployment.yaml"
+      - contains:
+          path: "spec.template.spec.containers[0].volumeMounts"
+          content:
+            name: "wallet-mnemonic"
+            mountPath: "/data/secret/"
+        template: "deployment.yaml"
+      - notContains:
+          path: "spec.template.spec.containers[0].env"
+          content:
+            name: "SIGNER_TYPE"
+            value: "KMS"
+        template: "deployment.yaml"
+      - exists:
+          path: "data[\"wallets.json\"]"
+        template: "configmap.yaml"
+      - hasDocuments:
+          count: 1
+        template: "secret.yaml"
+  - it: "Should configure the KMS signer"
+    set:
+      signer.type: "KMS"
+      signer.kms.keyId: "key-id"
+      signer.kms.region: "eu-central-1"
+    asserts:
+      - contains:
+          path: "spec.template.spec.containers[0].env"
+          content:
+            name: "SIGNER_TYPE"
+            value: "KMS"
+        template: "deployment.yaml"
+      - contains:
+          path: "spec.template.spec.containers[0].env"
+          content:
+            name: "KMS_CLOUD_TYPE"
+            value: "AWS"
+        template: "deployment.yaml"
+      - contains:
+          path: "spec.template.spec.containers[0].env"
+          content:
+            name: "LAYERZERO_KMS_IDS"
+            value: "key-id"
+        template: "deployment.yaml"
+      - contains:
+          path: "spec.template.spec.containers[0].env"
+          content:
+            name: "LAYERZERO_CDK_DEPLOY_REGION"
+            value: "eu-central-1"
+        template: "deployment.yaml"
+      - notContains:
+          path: "spec.template.spec.containers[0].env"
+          content:
+            name: "LAYERZERO_WALLETS_FILE_PATH"
+          any: true
+        template: "deployment.yaml"
+      - notContains:
+          path: "spec.template.spec.containers[0].env"
+          content:
+            name: "LAYERZERO_WALLET_MNEMONIC_MAPPING_FILE_PATH"
+          any: true
+        template: "deployment.yaml"
+      - notContains:
+          path: "spec.template.spec.containers[0].volumeMounts"
+          content:
+            name: "wallet-mnemonic"
+          any: true
+        template: "deployment.yaml"
+      - notContains:
+          path: "spec.template.spec.volumes"
+          content:
+            name: "wallet-mnemonic"
+          any: true
+        template: "deployment.yaml"
+      - notExists:
+          path: "data[\"wallets.json\"]"
+        template: "configmap.yaml"
+      - hasDocuments:
+          count: 0
+        template: "secret.yaml"
+  - it: "Should add extraEnv to the gasolina container"
+    set:
+      extraEnv:
+        - name: "AWS_ACCESS_KEY_ID"
+          valueFrom:
+            secretKeyRef:
+              name: "aws-credentials"
+              key: "AWS_ACCESS_KEY_ID"
+    asserts:
+      - contains:
+          path: "spec.template.spec.containers[0].env"
+          content:
+            name: "AWS_ACCESS_KEY_ID"
+            valueFrom:
+              secretKeyRef:
+                name: "aws-credentials"
+                key: "AWS_ACCESS_KEY_ID"
+        template: "deployment.yaml"
+...
+# yamllint enable rule:line-length

@@ -1,3 +1,12 @@
 {{ if and (not .Values.metrics.enabled) (.Values.metrics.serviceMonitor.enabled) }}
   {{ fail "If metrics.serviceMonitor.enabled is true, metrics.enabled must be true!" }}
 {{ end }}
+{{ if not (has .Values.signer.type (list "LOCAL_MNEMONIC" "KMS")) }}
+  {{ fail "signer.type must be LOCAL_MNEMONIC or KMS!" }}
+{{ end }}
+{{ if and (eq .Values.signer.type "KMS") (not .Values.signer.kms.keyId) }}
+  {{ fail "signer.kms.keyId must be set if signer.type is KMS!" }}
+{{ end }}
+{{ if and (eq .Values.signer.type "KMS") (not .Values.signer.kms.region) }}
+  {{ fail "signer.kms.region must be set if signer.type is KMS!" }}
+{{ end }}
